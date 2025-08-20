@@ -1,15 +1,17 @@
-# The command registry
+# Command Registry
 
-Modules register commands that they want to hear messages for as such:
+Modules register commands they want to handle messages for as follows:
 
+## Example Command Registrations
+
+### Weather Command
+
+This command matches messages like:
+
+- `!weather 12345`
+- Works across all platforms, networks, instances, and channels.
+  
 ```json
-// topic: command.register
-
-// Assumption: network prefix of "^!(.*)"
-
-// This command matches stuff like:
-// !weather 12345
-// From all connections, in all rooms, on all networks, on all platforms
 {
   "type": "command.register",
   "commandUUID": "d462389d-a4f5-4d38-b738-3fa2ae89c2ad",
@@ -18,19 +20,25 @@ Modules register commands that they want to hear messages for as such:
   "instance": "^.*$",
   "channel": "^.*$",
   "user": "^.*$",
-  "regex": "^weather (0-9a-z)",
+  "regex": "^weather (0-9a-z)+$",
   "platformPrefixAllowed": true,
   "ratelimit": {
     "mode": "enqueue",
     "level": "channel",
-    "limit": "10",
+    "limit": 10,
     "interval": "30s"
-  },
-},
+  }
+}
+```
 
-// This command matches stuff like:
-// !tell alice fizzbuzz
-// In all rooms on all irc networks
+### Tell Command
+
+This command matches messages like:
+
+- `!tell alice fizzbuzz`
+- Works in all IRC rooms across all networks.
+  
+```json
 {
   "type": "command.register",
   "commandUUID": "46b21d7a-9c8e-4109-8163-c53946eec809",
@@ -44,18 +52,20 @@ Modules register commands that they want to hear messages for as such:
   "ratelimit": {
     "mode": "drop",
     "level": "user",
-    "limit": "10",
+    "limit": 10,
     "interval": "10s"
-  },
-},
+  }
+}
+```
 
-// This command matches stuff like:
-// ~admin fizzbuzz
-// In room #eevee-admin
-// On platform irc
-// On network thegooscloud
-// From user goos@foo.bar.baz
-// As heard by connection instance "eevee"
+### Admin Command
+
+This command matches messages like:
+
+- `~admin fizzbuzz`
+- Restricted to the `#eevee-admin` channel on the `thegooscloud` network via the `irc` platform from the user `goos@foo.bar.baz` through the connection instance `eevee`.
+  
+```json
 {
   "type": "command.register",
   "commandUUID": "cf3135fd-2459-45f5-809c-b27683885d9f",
@@ -66,14 +76,20 @@ Modules register commands that they want to hear messages for as such:
   "user": "^goos@foo.bar.baz$",
   "regex": "^~admin .*$",
   "platformPrefixAllowed": false,
-  "ratelimit": false,
-},
+  "ratelimit": false
+}
+```
 
-// This "command" matches everything said
-// in a certain room on a certain network
+### General Room Listener
+
+This "command" matches all messages:
+
+- In the `#general` channel of the `thegooscloud` network via the `irc` platform through the connection instance `eevee`.
+  
+```json
 {
   "type": "command.register",
-  "commandUUID": "cf3135fd-2459-45f5-809c-b27683885d9f",
+  "commandUUID": "9a8f7b6c-5d4e-3f2g-1h0i-jk9876543210",
   "platform": "^irc$",
   "network": "^thegooscloud$",
   "instance": "^eevee$",
@@ -81,9 +97,10 @@ Modules register commands that they want to hear messages for as such:
   "user": "^.*$",
   "regex": "^.*$",
   "platformPrefixAllowed": false,
-  "ratelimit": false,
+  "ratelimit": false
 }
 ```
 
-The registry component of the router stores these registrations in redis.
-At runtime, it does lookups.
+## Storage
+
+The registry component of the router stores these registrations in Nats. At runtime, it performs lookups based on these registrations.

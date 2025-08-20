@@ -1,99 +1,113 @@
-# The lifecycle of a message
+# The Lifecycle of a Message
 
-First, a user sends a message to the chat:
+## A Message Is Born
+
+First, a user sends a message to the chat. This could be through any supported messaging platform, such as IRC, Discord, or Slack:
 
 ```none
-// irc.thegoos.cloud#general
+// Example on IRC
 <goos> !weather 12345
 ```
 
-The message is heard by the module `irc-connector@thegooscloud`, which forwards the message to kafka as such:
+## Your Voice Is Heard
+
+The message is heard by the appropriate module, which is responsible for handling the incoming messages from specific platforms (e.g., `irc-connector@thegooscloud`). This module formats the message into a standardized JSON payload and forwards it to the NATS message broker:
 
 ```json
-// topic: chat.message.incoming.$platform.$instance.$channel.$user
+// Topic format: chat.message.incoming.$platform.$instance.$channel.$user
+// Example topic: chat.message.incoming.irc.eevee.#general.goos
 {
   "type": "message.incoming",
-  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed",
-  "platform": "irc",
-  "network": "thegooscloud",
-  "instance": "eevee",
-  "channel": "#general",
-  "user": "goos",
-  "text": "!weather 12345",
-  "raw_event": {}, // TODO: fill this in with an example
+  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed", // Unique trace ID for the message
+  "platform": "irc", // Platform the message came from
+  "network": "thegooscloud", // Network identifier within the platform
+  "instance": "eevee", // Instance identifier within the network
+  "channel": "#general", // Channel where the message was posted
+  "user": "goos", // User who sent the message
+  "text": "!weather 12345", // Raw text of the message
+  "raw_event": {}, // Placeholder for raw event data from the platform
 }
 ```
 
-This message is then consumed by the `router` module, which first checks it for a common prefix.
-It then attempts to parse it against any number of registered regexes.
-Then, it checks for any registered filtering or ratelimiting rules, and applies them as necessary
-Finally, it emits the parsed message back into kafka as such:
+## We Seek to Understand
+
+The `router` module consumes the incoming message from NATS. The router performs several tasks:
+
+1. **Common Prefix Check:** It verifies if the message starts with a recognized prefix (e.g., `!`).
+2. **Regex Parsing:** The router attempts to match the message text against any registered regular expressions.
+3. **Filtering and Ratelimiting:** It checks the message against any filtering or ratelimiting rules.
+4. **Emitting a Parsed Message:** After processing, the router emits a structured message back into NATS with additional metadata:
 
 ```json
-// topic: command.request.$command
+// Topic format: command.request.$command
+// Example topic: command.request.weather
 {
-  "argv": [ "!weather", "12345" ],
-  "channel": "#general",
-  "command": "weather",
-  "commandUUID": "d462389d-a4f5-4d38-b738-3fa2ae89c2ad",
-  "network": "thegooscloud",
-  "instance": "eevee",
-  "platform": "irc",
-  "prefix": "!",
-  "raw": {},
-  "regexCaptured": ["12345"],
-  "targetModule": "weather",
-  "text": "!weather 12345",
-  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed",
-  "type": "command.request",
-  "user": "goos@foo.bar.baz",
+  "argv": [ "!weather", "12345" ], // Argument vector with command and parameters
+  "channel": "#general", // Channel where the message originated
+  "command": "weather", // Command extracted from the message
+  "commandUUID": "d462389d-a4f5-4d38-b738-3fa2ae89c2ad", // Unique UUID for the command request
+  "network": "thegooscloud", // Network identifier within the platform
+  "instance": "eevee", // Instance identifier within the network
+  "platform": "irc", // Platform where the message was received
+  "prefix": "!", // Command prefix used
+  "raw": {}, // Raw input data for reference
+  "regexCaptured": ["12345"], // Any captured groups from regex matching
+  "targetModule": "weather", // Target module for processing the command
+  "text": "!weather 12345", // Original message text
+  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed", // Trace ID inherited from the original message
+  "type": "command.request", // Type of message being processed
+  "user": "goos@foo.bar.baz", // Full user identifier including network information
+  "ratelimited": true, // Was this message held due to ratelimiting rules
 }
 ```
 
-The message is consumed by command modules, in this case the `weather` module.
-The module does any necessary logic with the message.
-If a reply is required, it emits a message to kafka:
+## We Want to Help
+
+The parsed `command.request` message is now delivered to the target module, which in this case is the `weather` module. This module performs the necessary action to fulfill the command, such as querying an external weather API. If the command requires a response, the module will construct and send a `command.response` message back to NATS:
 
 ```json
-// topic: command.response
+// Topic: command.response
 {
-  "channel": "#general",
-  "fromModule": "weather",
-  "network": "thegooscloud",
-  "instance": "eevee",
-  "platform": "irc",
-  "text": "goos: the weather for 12345 is foo bar baz",
-  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed",
-  "type": "command.response",
+  "channel": "#general", // Channel where the response should be sent
+  "fromModule": "weather", // Module that processed the command
+  "network": "thegooscloud", // Network identifier within the platform
+  "instance": "eevee", // Instance identifier within the network
+  "platform": "irc", // Platform where the response should be sent
+  "text": "goos: the weather for 12345 is foo bar baz", // Response text to be sent to the user
+  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed", // Trace ID inherited from the original message
+  "type": "command.response", // Type of message being sent
 }
 ```
 
-This message is consumed by the `router` module, which applies any ratelimiting or filtering rules.
-It then emits a message into kafka:
+## Hear Our Voice
+
+The `router` module consumes the `command.response` message from NATS. Similar to its role in understanding incoming messages, the router may apply additional filtering or ratelimiting rules to the response. Once processed, it emits a `chat.message.outgoing` message, which is picked up by the appropriate connector module:
 
 ```json
-// topic: chat.message.outgoing.$platform.$network.$channel
+// Topic format: chat.message.outgoing.$platform.$network.$channel
+// Example topic: chat.message.outgoing.irc.thegooscloud.#general
 {
-  "channel": "#general",
-  "network": "thegooscloud",
-  "instance": "eevee",
-  "platform": "irc",
-  "text": "goos: the weather for 12345 is foo bar baz",
-  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed",
-  "type": "message.outgoing",
+  "channel": "#general", // Channel where the message should be posted
+  "network": "thegooscloud", // Network identifier within the platform
+  "instance": "eevee", // Instance identifier within the network
+  "platform": "irc", // Platform where the message should be sent
+  "text": "goos: the weather for 12345 is foo bar baz", // Text of the message to be sent
+  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed", // Trace ID inherited from the original message
+  "type": "message.outgoing", // Type of message being sent
 }
 ```
 
-This is consumed by the proper connector, in this case `irc-connector@thegooscloud`, which sends the message to the requested destination:
+This outgoing message is then consumed by the `irc-connector@thegooscloud` module, which is responsible for sending the message to the intended destination on the IRC network:
 
 ```none
-// irc.thegoos.cloud#general
+// Example output on IRC
 <goos> !weather 12345
 <eevee> goos: the weather for 12345 is foo bar baz
 ```
 
 ## Notes
 
-A module may register `.*` with no `prefix` specified as a "command" in order to hear all messages sent in a channel.
+A module may register `.*` with no `prefix` specified to listen to all messages in a channel. This is useful for modules that need to react to specific content regardless of whether it starts with a command prefix. Notable examples include:
 
-`tell` does this in order to know when/where to deliver a message
+- **`tell`**: This module listens to all messages to identify any commands for delayed delivery.
+- **`urltitle`**: This module listens to all messages to fetch and display titles of URLs posted in channels.
