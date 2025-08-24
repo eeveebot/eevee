@@ -16,35 +16,40 @@ natsCluster:
 
 toolbox:
   enabled: true
+  containerSpec:
+    containerImage: ghcr.io/eeveebot/toolbox:latest
+    pullPolicy: Always
+    size: 1
 
 connectors:
   irc:
     enabled: true
-    containerImage: ghcr.io/eeveebot/connector-irc:latest
-    pullPolicy: Always
-    size: 1
-    ircConnections:
-    - ident:
-        gecos: eevee.bot
-        nick: eevee
-        quitMsg: eevee 0.4.20
-        username: eevee
-        version: 0.4.20
-      irc:
-        autoReconnect: true
-        autoReconnectMaxRetries: 10
-        autoReconnectWait: 5000
-        autoRejoin: true
-        autoRejoinMaxRetries: 5
-        autoRejoinWait: 5000
-        host: localhost
-        pingInterval: 30
-        pingTimeout: 120
-        port: 6667
-        ssl: true
-      name: eeveebot
-      postConnect:
-        join:
-        - channel: '#eevee'
-          password: ""
-          sequence: 1
+    spec:
+      containerImage: ghcr.io/eeveebot/connector-irc:latest
+      pullPolicy: Always
+      size: 1
+      ircConnections:
+      - ident:
+          gecos: eevee.bot
+          nick: eevee
+          quitMsg: eevee 0.4.20
+          username: eevee
+          version: 0.4.20
+        irc:
+          autoReconnect: true
+          autoReconnectMaxRetries: 10
+          autoReconnectWait: 5000
+          autoRejoin: true
+          autoRejoinMaxRetries: 5
+          autoRejoinWait: 5000
+          host: localhost
+          pingInterval: 30
+          pingTimeout: 120
+          port: 6667
+          ssl: true
+        name: eeveebot
+        postConnect:
+          join:
+          - channel: '#eevee'
+            password: ""
+            sequence: 1

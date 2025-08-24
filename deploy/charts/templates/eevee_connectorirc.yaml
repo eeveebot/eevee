@@ -8,5 +8,5 @@ metadata:
   labels:
   {{- include "charts.labels" . | nindent 4 }}
 spec:
-  {{- .Values.connectors.irc | nindent 2 }}
+  {{- .Values.connectors.irc.spec | nindent 2 }}
 {{ endif }}

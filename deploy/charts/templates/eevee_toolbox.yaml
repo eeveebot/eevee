@@ -8,7 +8,5 @@ metadata:
   labels:
   {{- include "charts.labels" . | nindent 4 }}
 spec:
-  containerImage: ghcr.io/eeveebot/toolbox:latest
-  pullPolicy: Always
-  size: 1
+  {{- .Values.toolbox.containerSpec | nindent 2 }}
 {{ endif }}
