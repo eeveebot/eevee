@@ -11,6 +11,8 @@ toc: true
 
 [**Homepage**](https://eevee.bot/)
 
+[**Main Repo**](https://github.com/eeveebot/eevee)
+
 [**Documentation**](https://eevee.bot/docs)
 
 [**Operator**](https://github.com/eeveebot/operator)

@@ -6,6 +6,8 @@
 
 [**Homepage**](https://eevee.bot/)
 
+[**Main Repo**](https://github.com/eeveebot/eevee)
+
 [**Documentation**](https://eevee.bot/docs)
 
 [**Operator**](https://github.com/eeveebot/operator)
@@ -18,10 +20,10 @@
 
 ## Getting Started
 
-Check out [eevee/README.md](https://github.com/eeveebot/eevee/blob/main/README.md) for setup instructions.
+Check out [quickstart/gettting-started](https://eevee.bot/docs/quickstart/getting-started/) for setup instructions.
 
 ## License
 
 All eevee components are covered under `Attribution-NonCommercial-ShareAlike 4.0 International`
 
-See [LICENSE](https://github.com/eeveebot/.github/blob/main/LICENSE) for details.
+See [LICENSE](https://github.com/eeveebot/eevee/blob/main/LICENSE) for details.
