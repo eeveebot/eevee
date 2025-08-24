@@ -38,7 +38,7 @@
 
         <div class="d-flex align-items-center">
             <ul class="list-unstyled mb-0">
-                <li><a href="https://helm.eevee.bot"><img src="https://eevee.bot/landing/helm-mark.svg" alt="Helm Icon" class="icon" width="24" height="24"></a></li>
+                <li class="list-inline-item mb-0"><a href="https://helm.eevee.bot"  rel="noopener noreferrer" target="_blank"><div class="btn btn-icon btn-default border-0"></div><img src="https://eevee.bot/landing/helm-mark.svg" alt="Helm Icon" class="icon" width="24" height="24"></div></a></li>
                 {{ with $.Scratch.Get "social_list" }}
                 {{ range . }}
                     {{ $path := printf "images/social/%s.%s" . "svg" }}
