@@ -1,6 +1,7 @@
 baseURL = "https://eevee.bot/"
 languageCode = "en-us"
 title = "eevee.bot"
+sectionPagesMenu: primary
 
 defaultContentLanguage = 'en'
 [languages]
@@ -52,7 +53,7 @@ defaultContentLanguage = 'en'
 [params.social]
   github = "eeveebot"
 
-[menus.primary]
+[menus]
   [[menus.primary]]
     name = "Helm"
     url = "https://helm.eevee.bot"
