@@ -1,12 +1,12 @@
 baseURL = "https://eevee.bot/"
 languageCode = "en-us"
-title = "RTFM"
+title = "eevee.bot docs"
 sectionPagesMenu = "main"
 
 defaultContentLanguage = 'en'
 [languages]
   [languages.en]
-    title = "RTFM"
+    title = "eevee.bot docs"
     languageName = "English"
     weight = 10
 
@@ -41,7 +41,8 @@ defaultContentLanguage = 'en'
   extLinkNewTab  = true
   prism          = true 
   prismTheme     = "lucario"
-  title          = "RTFM"
+  title          = "eevee.bot docs"
+  logoLinkURL    = "https://eevee.bot/docs"
 
 [params.footer]
   copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
