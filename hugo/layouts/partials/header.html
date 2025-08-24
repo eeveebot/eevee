@@ -17,6 +17,7 @@
                     {{- range .Site.Menus.primary }}
                     <li><a href="{{ relLangURL .URL }}">{{ .Name }}</a></li>
                     {{ end }}
+                    <li><a href="https://helm.eevee.bot"><img src="https://eevee.bot/landing/helm-mark.svg" alt="Helm Icon" class="icon" width="24" height="24"></a></li>
                 </ul><!--end navigation menu-->
             </div><!--end navigation-->
 
@@ -26,7 +27,7 @@
                 {{ range . }}
                     {{ $path := printf "images/social/%s.%s" . "svg" }}
                     <li class="list-inline-item mb-0">
-                        <a href="{{ index site.Params.social . }}" alt="{{ . }}" rel="noopener noreferrer" target="_blank">
+                        <a href="{{ if eq . `rss` }} {{ `index.xml` | absURL }} {{ else if eq . `bluesky` }} https://bsky.app/profile/{{ index site.Params.social . }} {{ else }} https://{{ . }}.com/{{ index site.Params.social . }} {{ end }}" alt="{{ . }}" rel="noopener noreferrer" target="_blank">
                             <div class="btn btn-icon btn-landing border-0">
                                 {{ with resources.Get $path }}
                                     {{ .Content | safeHTML }}

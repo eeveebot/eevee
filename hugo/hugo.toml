@@ -51,5 +51,4 @@ defaultContentLanguage = 'en'
   copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
 
 [params.social]
-  github = "https://github.com/eeveebot"
-  helm = "https://helm.eevee.bot"
+  github = "eeveebot"
