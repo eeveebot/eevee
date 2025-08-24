@@ -6,9 +6,11 @@
 
 [**Homepage**](https://eevee.bot/)
 
-[**Main Repo**](https://github.com/eeveebot/eevee)
+[**Helm Repo**](https://helm.eevee.bot)
 
 [**Documentation**](https://eevee.bot/docs)
+
+[**MetaRepo**](https://github.com/eeveebot/eevee)
 
 [**Operator**](https://github.com/eeveebot/operator)
 
