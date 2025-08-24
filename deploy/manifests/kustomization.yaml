@@ -1,0 +1,8 @@
+---
+kind: Kustomization
+resources:
+- eevee_operator.yaml
+- eevee_toolbox.yaml
+- eevee_connectorirc.yaml
+- eevee_natscluster.yaml
+- eevee_natsauth.yaml

@@ -1,0 +1,6 @@
+---
+kind: Kustomization
+resources:
+- eevee.bot_toolboxes.yaml
+- eevee.bot_connectorircs.yaml
+- eevee.bot_natsclusters.yaml

@@ -1,0 +1,12 @@
+{{ if .Values.connectors.irc.enabled }}
+---
+apiVersion: eevee.bot/v1alpha1
+kind: ConnectorIrc
+metadata:
+  name: {{ include "charts.fullname" . }}-connector-irc
+  namespace: {{ .Values.botNamespace }}
+  labels:
+  {{- include "charts.labels" . | nindent 4 }}
+spec:
+  {{- .Values.connectors.irc | nindent 2 }}
+{{ endif }}

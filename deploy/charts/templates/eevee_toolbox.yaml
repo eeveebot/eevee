@@ -1,0 +1,14 @@
+{{ if .Values.toolbox.enabled }}
+---
+apiVersion: eevee.bot/v1alpha1
+kind: Toolbox
+metadata:
+  name: {{ include "charts.fullname" . }}-toolbox
+  namespace: {{ .Values.botNamespace | default "eevee-bot" }}
+  labels:
+  {{- include "charts.labels" . | nindent 4 }}
+spec:
+  containerImage: ghcr.io/eeveebot/toolbox:latest
+  pullPolicy: Always
+  size: 1
+{{ endif }}
