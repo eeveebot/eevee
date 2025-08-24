@@ -49,17 +49,4 @@ defaultContentLanguage = 'en'
   copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
 
 [params.social]
-  github = "https://github.com/eeveebot"
-
-[menu]
-[[menu.primary]]
-    name  = "Docs"
-    url = "docs/"
-    identifier = "docs"
-    weight = 10
-
-[[menu.primary]]
-    name  = "Github"
-    url = "https://github.com/eeveebot"
-    identifier = "github"
-    weight = 30
+  github = "eeveebot"
