@@ -7,7 +7,7 @@ sectionPagesMenu = "main"
 defaultContentLanguage = 'en'
 [languages]
   [languages.en]
-    title = "Lotus Docs Example Site"
+    title = "RTFM"
     languageName = "English"
     weight = 10
 
@@ -42,6 +42,7 @@ defaultContentLanguage = 'en'
   extLinkNewTab  = true
   prism          = true 
   prismTheme     = "lucario"
+  title          = "RTFM"
 
 [params.footer]
   copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
