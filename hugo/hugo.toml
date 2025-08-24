@@ -1,7 +1,6 @@
 baseURL = "https://eevee.bot/"
 languageCode = "en-us"
 title = "RTFM"
-
 sectionPagesMenu = "main"
 
 defaultContentLanguage = 'en'
