@@ -35,6 +35,7 @@ defaultContentLanguage = 'en'
   sans_serif_font = "Inter"     # Default is System font
   secondary_font  = "Inter"     # Default is System font
   mono_font       = "Fira Code" # Default is System font
+  description     = "eevee.bot"
 
 [params.docs]
   intLinkTooltip = true
