@@ -1,7 +1,7 @@
 ---
 weight: 410
 title: "Deploy Operator with FluxCD"
-description: "Deploy Operator with FluxCD"
+description: "Gitops for my irc bot? It's more likely than you think!"
 draft: false
 toc: true
 ---

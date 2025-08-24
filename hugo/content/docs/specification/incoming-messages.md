@@ -1,6 +1,7 @@
 ---
 weight: 220
 title: "The Lifecycle of a Message"
+description: "An explanation of message flow"
 draft: false
 toc: true
 ---

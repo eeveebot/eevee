@@ -1,6 +1,7 @@
 ---
 weight: 210
 title: "Command Registry"
+description: "How commands get commanded"
 draft: false
 toc: true
 ---
