@@ -43,6 +43,7 @@ defaultContentLanguage = 'en'
   prismTheme     = "lucario"
   title          = "eevee.bot docs"
   logoLinkURL    = "https://eevee.bot/docs"
+  darkMode       = true
 
 [params.footer]
   copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
