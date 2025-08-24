@@ -1,55 +1,39 @@
----
-botNamespace: my-eevee-bot
-operatorNamespace: eevee-system
-
-natsAuthSecret: nats-auth
-natsAuthExistingSecret: false
-
-metrics: true
-
-operator:
+eeveeOperator:
+  operator:
+    args:
+    - --metrics-bind-address=:8443
+    - --leader-elect
+    - --health-probe-bind-address=:8081
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+    image:
+      repository: ghcr.io/eeveebot/operator
+      tag: latest
+    imagePullPolicy: Always
+    resources:
+      limits:
+        cpu: "2"
+        memory: 512Mi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
   replicas: 1
-
-natsCluster:
-  pvcSize: 10Gi
-  storageClass: mystorageclass
-
-toolbox:
-  enabled: true
-  containerSpec:
-    containerImage: ghcr.io/eeveebot/toolbox:latest
-    pullPolicy: Always
-    size: 1
-
-connectors:
-  irc:
-    enabled: true
-    spec:
-      containerImage: ghcr.io/eeveebot/connector-irc:latest
-      pullPolicy: Always
-      size: 1
-      ircConnections:
-      - ident:
-          gecos: eevee.bot
-          nick: eevee
-          quitMsg: eevee 0.4.20
-          username: eevee
-          version: 0.4.20
-        irc:
-          autoReconnect: true
-          autoReconnectMaxRetries: 10
-          autoReconnectWait: 5000
-          autoRejoin: true
-          autoRejoinMaxRetries: 5
-          autoRejoinWait: 5000
-          host: localhost
-          pingInterval: 30
-          pingTimeout: 120
-          port: 6667
-          ssl: true
-        name: eeveebot
-        postConnect:
-          join:
-          - channel: '#eevee'
-            password: ""
-            sequence: 1
+  serviceAccount:
+    annotations: {}
+eeveeOperatorMetricsService:
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local
+natsAuth:
+  token: ""
