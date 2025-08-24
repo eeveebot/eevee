@@ -1,1 +1,5 @@
 .DS_Store
+hugo/assets/jsconfig.json
+hugo/public/**
+hugo/resources/_gen/**
+hugo/resources/_gen/**

@@ -2,7 +2,10 @@
 {{ $featured := $images.GetMatch "*feature*" }}
 {{ if not $featured }}{{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
 {{ if not $featured }}
-    {{ $featured = resources.Get "/logo/eevee-transparent.png" }}
+    {{ $featured = resources.Get "logo/eevee-transparent.png" }}
+{{ end }}
+
+{{ if $featured }}
     {{ $font := resources.Get "/opengraph/poppins-bold.ttf" }}
     {{ $descPadding := 0 }}
 
@@ -25,7 +28,7 @@
 
     {{ $filters := slice (images.Text $textTitle $textTitleOptions) }}
 
-    {{ $logo := resources.Get "/landing/docs.svg" }}
+    {{ $logo := resources.Get "landing/docs.png" }}
     {{ with $logo }}
         {{ $logo = $logo.Resize "x60" }}
         {{ $logoFilter := (images.Overlay $logo 65 110) }}
