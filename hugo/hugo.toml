@@ -15,17 +15,10 @@ sectionPagesMenu = "main"
 [markup.goldmark.renderer]
   unsafe = true
 
-[[menu.primary]]
-  name  = "Docs"
-  url = "/docs/"
-  identifier = "docs"
-  weight = 10
-
 [params.docs]
   intLinkTooltip = true
   extLinkNewTab  = true
   prismTheme     = "lucario"
-
 
 [params.footer]
   copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
