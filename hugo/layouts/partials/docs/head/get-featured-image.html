@@ -27,7 +27,7 @@
 
     {{ $logo := resources.Get "logo/eevee-transparent.png" }}
     {{ with $logo }}
-        {{ $logo = $logo.Resize "x60" }}
+        {{ $logo = $logo.Resize "x10" }}
         {{ $logoFilter := (images.Overlay $logo 65 110) }}
         {{ $filters = $filters | append $logoFilter }}
     {{ end }}
