@@ -1,7 +1,6 @@
 baseURL = "https://eevee.bot/"
 languageCode = "en-us"
 title = "eevee.bot"
-sectionPagesMenu = "main"
 
 defaultContentLanguage = 'en'
 [languages]
