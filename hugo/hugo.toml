@@ -52,3 +52,9 @@ defaultContentLanguage = 'en'
 
 [params.social]
   github = "eeveebot"
+
+[HTTPCache]
+  [HTTPCache.cache]
+    [HTTPCache.cache.for]
+      excludes = ['**']
+      includes = []
