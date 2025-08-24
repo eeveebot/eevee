@@ -1,11 +1,8 @@
 ---
-weight: 999
+weight: 220
 title: "The Lifecycle of a Message"
 draft: false
 toc: true
-menus:
-  main:
-    parent: Spec
 ---
 
 ## A Message Is Born

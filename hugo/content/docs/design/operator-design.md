@@ -1,11 +1,8 @@
 ---
-weight: 999
-title: "Overview: Eevee Kubernetes Operator"
+weight: 310
+title: "Overview: eevee Kubernetes Operator"
 draft: false
 toc: true
-menus:
-  main:
-    parent: Design
 ---
 
 ## Introduction

@@ -1,10 +1,8 @@
 ---
-weight: 999
-title: "Docs Home"
+weight: 0
+title: "Overview"
 draft: false
 toc: true
-menus:
-  main:
 ---
 
 > eevee, the lovable chatbot framework!

@@ -1,11 +1,8 @@
 ---
-weight: 999
+weight: 110
 title: "Getting Started"
 draft: false
 toc: true
-menus:
-  main:
-    parent: Spec
 ---
 
 ## Requirements

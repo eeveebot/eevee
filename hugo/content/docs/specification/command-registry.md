@@ -1,11 +1,8 @@
 ---
-weight: 999
+weight: 210
 title: "Command Registry"
 draft: false
 toc: true
-menus:
-  main:
-    parent: Spec
 ---
 
 Modules register commands they want to handle messages for as follows:
