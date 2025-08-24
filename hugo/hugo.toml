@@ -57,4 +57,4 @@ defaultContentLanguage = 'en'
   [[menus.primary]]
     name = "Helm"
     url = "https://helm.eevee.bot"
-    pre = '<img src="{{ landing/helm-mark.svg | absURL }}" alt="Helm Icon" class="icon" width="24" height="24">'
+    pre = '<img src="https://eevee.bot/landing/helm-mark.svg" alt="Helm Icon" class="icon" width="24" height="24">'
