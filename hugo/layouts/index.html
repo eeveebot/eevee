@@ -5,20 +5,66 @@
   <meta property="og:description" content="one friendly bot" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://eevee.bot" />
-  {{- with $.Params.images -}}
-  {{- range first 6 . }}<meta property="og:image" content="{{ . | absURL }}" />{{ end -}}
-  {{- else -}}
-  {{- $images := $.Resources.ByType "image" -}}
-  {{- $pathName := $.Scratch.Get "pathName" -}}
-  {{- if $pathName -}}
-  {{- $featured := partial (printf "%s/%s" $pathName "head/get-featured-image.html") . -}}
-  {{- with $featured -}}
+  {{ $featured := resources.Get "/logo/eevee-card.png" }}
+
+  {{ $font := resources.Get "/opengraph/poppins-bold.ttf" }}
+  {{ $descPadding := 0 }}
+  {{ $title := "eevee" }}
+  {{ $sizeTitle := 80 }}
+  {{ $sizeDesc := 50 }}
+  {{ if gt (len $title) 23 }}
+      {{ $sizeTitle = 60 }}
+  {{ end }}
+  {{ $textTitle := $title }}
+  {{ $textTitleOptions := dict
+      "color" "#f9f1f1"
+      "size" $sizeTitle
+      "lineSpacing" 10
+      "x" 65 "y" 180
+      "font" $font
+  }}
+  {{ $filters := slice (images.Text $textTitle $textTitleOptions) }}
+  {{ $logo := resources.Get "/landing/docs-white.png" }}
+  {{ with $logo }}
+      {{ $logo = $logo.Resize "x60" }}
+      {{ $logoFilter := (images.Overlay $logo 65 110) }}
+      {{ $filters = $filters | append $logoFilter }}
+  {{ end }}
+  {{ if gt ($title | strings.RuneCount) 23 }}
+  {{ $descPadding = -30 }}
+      {{ if gt ($title | strings.RuneCount) 40 }}
+          {{ $descPadding = 40 }}
+      {{ end }}
+      {{ $sizeDesc = 45 }}
+  {{ end }}
+  {{ $description := "One Friendly Bot" }}
+  {{ with $description }}
+      {{ $textDesc := $description }}
+      {{ $textDescOptions := dict
+          "color" "#f9f1f1"
+          "size" $sizeDesc
+          "lineSpacing" 10
+          "x" 65 "y" (add 290 $descPadding)
+          "font" $font
+      }}
+      {{ $descFilter := (images.Text $textDesc $textDescOptions) }}
+      {{ $filters = $filters | append $descFilter }}
+  {{ end }}
+  {{ $textSiteTitle := $.Site.Title }}
+  {{ with $textSiteTitle }}
+      {{ $textSiteTitleOptions := dict
+          "color" "#f9f1f1"
+          "size" 35
+          "lineSpacing" 10
+          "x" 65 "y" 550
+          "font" $font
+      }}
+      {{ $siteTitleFilter := (images.Text $textSiteTitle $textSiteTitleOptions)}}
+      {{ $filters = $filters | append $siteTitleFilter }}
+  {{ end }}
+  {{ $featured = $featured | images.Filter $filters }}
   <meta property="og:image" content="{{ $featured.Permalink }}"/>
-  {{- end -}}
-  {{- else -}}
   {{- with $.Site.Params.images }}<meta property="og:image" content="{{ index . 0 | absURL }}"/>{{ end -}}
-  {{- end -}}
-  {{- end -}}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>eevee.bot</title>
