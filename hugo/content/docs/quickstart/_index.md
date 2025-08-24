@@ -1,6 +1,6 @@
 ---
 weight: 100
-title: "quickstart"
+title: "Quickstart"
 date: "2023-05-22T00:34:57+01:00"
 draft: false
 ---
