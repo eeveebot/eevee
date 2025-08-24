@@ -1,4 +1,4 @@
-{{ $featured = resources.Get "/logo/eevee-card.png" }}
+{{ $featured := resources.Get "/logo/eevee-card.png" }}
 
 {{ $font := resources.Get "/opengraph/poppins-bold.ttf" }}
 {{ $descPadding := 0 }}
@@ -17,7 +17,7 @@
     "font" $font
 }}
 {{ $filters := slice (images.Text $textTitle $textTitleOptions) }}
-{{ $logo := resources.Get "/landing/docs.png" }}
+{{ $logo := resources.Get "/landing/docs-white.png" }}
 {{ with $logo }}
     {{ $logo = $logo.Resize "x60" }}
     {{ $logoFilter := (images.Overlay $logo 65 110) }}
