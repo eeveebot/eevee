@@ -1,4 +1,16 @@
-# Overview: Eevee Kubernetes Operator
+---
+weight: 999
+title: "Overview: Eevee Kubernetes Operator"
+description: ""
+icon: "article"
+date: "2025-08-24T07:58:56-04:00"
+lastmod: "2025-08-24T07:58:56-04:00"
+draft: false
+toc: true
+menus:
+  main:
+    parent: Design
+---
 
 ## Introduction
 

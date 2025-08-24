@@ -1,9 +1,0 @@
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nats-auth
-  namespace: my-eevee-bot
-type: Opaque
-stringData:
-  token: areallycooltoken
