@@ -45,7 +45,7 @@ defaultContentLanguage = 'en'
   title          = "eevee.bot"
   logoLinkURL    = "https://eevee.bot/docs"
   darkMode       = true
-  themeColor     = red
+  themeColor     = "red"
 
 [params.footer]
   copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
