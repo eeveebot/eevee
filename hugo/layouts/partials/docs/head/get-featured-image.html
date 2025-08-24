@@ -2,7 +2,7 @@
 {{ $featured := $images.GetMatch "*feature*" }}
 {{ if not $featured }}{{ $featured = $images.GetMatch "{*cover*,*thumbnail*}" }}{{ end }}
 {{ if not $featured }}
-    {{ $featured = resources.Get "/opengraph/card-base-2.png" }}
+    {{ $featured = resources.Get "logo/eevee-transparent.png" }}
     {{ $font := resources.Get "/opengraph/poppins-bold.ttf" }}
     {{ $descPadding := 0 }}
 
@@ -24,13 +24,6 @@
     }}
 
     {{ $filters := slice (images.Text $textTitle $textTitleOptions) }}
-
-    {{ $logo := resources.Get "logo/eevee-transparent.png" }}
-    {{ with $logo }}
-        {{ $logo = $logo.Resize "x10" }}
-        {{ $logoFilter := (images.Overlay $logo 65 110) }}
-        {{ $filters = $filters | append $logoFilter }}
-    {{ end }}
 
     {{ if gt ($title | strings.RuneCount) 23 }}
     {{ $descPadding = -30 }}
