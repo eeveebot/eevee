@@ -21,7 +21,7 @@ There are plans to rework this chart into 3 charts:
 
 But this has not been done yet.
 
-See [helm.eevee.bot](https://helm.eevee.bot) and [eeveebot/helm](https://github.come/eeveebot/helm) for helm details.
+See [helm.eevee.bot](https://helm.eevee.bot) and [eeveebot/helm](https://github.com/eeveebot/helm) for helm details.
 
 ## Option 2 - Manifests
 
