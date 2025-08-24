@@ -1,6 +1,7 @@
 ---
 weight: 410
 title: "Deploy Operator with FluxCD"
+description: "Deploy Operator with FluxCD"
 draft: false
 toc: true
 ---

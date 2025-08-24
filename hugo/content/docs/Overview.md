@@ -1,7 +1,7 @@
 ---
 weight: 10
 title: "Overview"
-description: "Overview of eevee-bot documentation"
+description: "Overview"
 draft: false
 toc: true
 ---

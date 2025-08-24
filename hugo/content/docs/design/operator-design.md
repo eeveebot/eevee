@@ -1,6 +1,7 @@
 ---
 weight: 310
 title: "Overview: eevee Kubernetes Operator"
+description: "Overview: eevee Kubernetes Operator"
 draft: false
 toc: true
 ---
