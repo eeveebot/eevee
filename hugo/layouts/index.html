@@ -5,7 +5,20 @@
   <meta property="og:description" content="one friendly bot" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://eevee.bot" />
-  <meta property="og:image" content="{{ `logo/eevee-card.png` | absURL }}" />
+  {{- with $.Params.images -}}
+  {{- range first 6 . }}<meta property="og:image" content="{{ . | absURL }}" />{{ end -}}
+  {{- else -}}
+  {{- $images := $.Resources.ByType "image" -}}
+  {{- $pathName := $.Scratch.Get "pathName" -}}
+  {{- if $pathName -}}
+  {{- $featured := partial (printf "%s/%s" $pathName "head/get-featured-image.html") . -}}
+  {{- with $featured -}}
+  <meta property="og:image" content="{{ $featured.Permalink }}"/>
+  {{- end -}}
+  {{- else -}}
+  {{- with $.Site.Params.images }}<meta property="og:image" content="{{ index . 0 | absURL }}"/>{{ end -}}
+  {{- end -}}
+  {{- end -}}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>eevee.bot</title>
