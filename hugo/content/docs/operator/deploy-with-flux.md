@@ -1,17 +1,17 @@
 ---
-weight: 410
+weight: 420
 title: "Deploy Operator with FluxCD"
 description: "Gitops for my irc bot? It's more likely than you think!"
 draft: false
 toc: true
 ---
 
-## Deployment with FluxCD
+## Deployment with FluxCD - From Manifests
 
-To deploy the operator with FluxCD, add these manifests to your set.
+To deploy the operator with FluxCD from manifests, add these manifests to flux-system Kustomization.
 
 ```yaml
-# kustomization.yaml
+# eevee-operator/kustomization.yaml
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -19,7 +19,7 @@ resources:
   - deploy.yaml
   - repo.yaml
 
-# repo.yaml
+# eevee-operator/repo.yaml
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
@@ -37,7 +37,7 @@ spec:
     # include deploy dir
     !/dist
 
-# deploy.yaml
+# eevee-operator/deploy.yaml
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -52,3 +52,9 @@ spec:
     kind: GitRepository
     name: eevee-operator
 ```
+
+## Deployment with FluxCD - Helm Chart
+
+It should be possible to deploy the operator using the eevee-operator helm chart using flux.
+
+However, this has not (yet) been tested.
