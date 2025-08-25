@@ -1,6 +1,6 @@
 ---
 weight: 310
-title: "Overview: eevee Kubernetes Operator"
+title: "Overview: eevee-operator"
 description: "Why the hell did you write an operator"
 draft: false
 toc: true
