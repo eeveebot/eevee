@@ -24,19 +24,19 @@ It consists of one parent chart, `eevee`, and two dependent charts, `eevee-opera
 
 See [helm.eevee.bot](https://helm.eevee.bot) and [github.com/eeveebot/helm](https://github.com/eeveebot/helm) for sources.
 
-See [operator/deploy-with-helm](operator/deploy-with-helm) for info.
+See [operator/deploy-with-helm](/docs/operator/deploy-with-helm) for info.
 
 ### Option 2 - FluxCD
 
 You can use FluxCD to deploy the operator either from manifests or using Helm.
 
-See [operator/deploy-with-flux](operator/deploy-with-flux) for info.
+See [operator/deploy-with-flux](/docs/operator/deploy-with-flux) for info.
 
 ### Option 3 - Manifests
 
 ### Operator Deployment
 
-See [operator/deploy-manually](operator/deploy-manually) for info.
+See [operator/deploy-manually](/docs/operator/deploy-manually) for info.
 
 ```bash
 # tl;dr
@@ -45,4 +45,4 @@ kubectl apply -f https://github.com/eeveebot/operator/blob/main/dist/bundle.yaml
 
 ### Bot Deployment
 
-See [custom-resources/crds](custom-resources/crds.md) for details on the CRs that define an instance of eevee-bot.
+See [custom-resources/crds](/docs/custom-resources/crds.md) for details on the CRs that define an instance of eevee-bot.
