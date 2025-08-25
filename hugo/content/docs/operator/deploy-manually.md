@@ -10,19 +10,15 @@ toc: true
 
 Users may wish to deploy eevee-operator directly from manifests. This is how:
 
-## Clone the repo
+## Clone the repo and apply manifests
 
 ```bash
 # Clone repo
 git clone git@github.com:eeveebot/operator.git
 
 # move into the dir you just cloned the repo to
-cd operator/
-```
+cd operator/dist
 
-## Apply manifests
-
-```bash
 # apply crds, operator, rbac
 kubectl apply --kustomize .
 
