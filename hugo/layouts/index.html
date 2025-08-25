@@ -58,7 +58,7 @@
   {{ end }}
   {{ $featured = $featured | images.Filter $filters }}
   <meta property="og:image" content="{{ $featured.Permalink }}"/>
-  {{- with $.Site.Params.images }}<meta property="og:image" content="{{ index . 0 | absURL }}"/>{{ end -}}
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>eevee.bot</title>
