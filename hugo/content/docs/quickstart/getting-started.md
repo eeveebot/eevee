@@ -1,7 +1,7 @@
 ---
 weight: 110
 title: "Getting Started"
-description: "Start here!"
+description: "Start here"
 draft: false
 toc: true
 ---
