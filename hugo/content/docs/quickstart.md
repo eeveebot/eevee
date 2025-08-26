@@ -1,5 +1,5 @@
 ---
-weight: 1
+weight: 2
 title: "Quickstart"
 description: "Start here!"
 draft: false
