@@ -1,10 +1,33 @@
 ---
-weight: 110
-title: "Getting Started"
-description: "Start here"
+weight: 10
+title: "Quickstart"
+description: "Start here!"
 draft: false
 toc: true
 ---
+
+> eevee, the lovable chatbot framework!
+
+## What is eevee?
+
+eevee is a microservices architecture chatbot framework that lives in k8s \
+and consists of independent modules that communicate through a common message bus, NATS
+
+## Helpful Links
+
+| **Link**
+| ---
+| [**Homepage**](https://eevee.bot/)
+| [**Documentation**](https://eevee.bot/docs)
+| [**Helm Repo**](https://helm.eevee.bot)
+| [**Helm Git Repo**](https://github.com/eeveebot/helm)
+| [**MetaRepo**](https://github.com/eeveebot/eevee)
+| [**Operator**](https://github.com/eeveebot/operator)
+| [**Connector-IRC**](https://github.com/eeveebot/connector-irc)
+| [**Toolbox**](https://github.com/eeveebot/toolbox)
+| [**CLI**](https://github.com/eeveebot/cli)
+
+## Getting Started
 
 ## Requirements
 
@@ -46,3 +69,9 @@ kubectl apply -f https://github.com/eeveebot/operator/blob/main/dist/bundle.yaml
 ### Bot Deployment
 
 See [custom-resources/crds](/docs/custom-resources/crds.md) for details on the CRs that define an instance of eevee-bot.
+
+## License
+
+All eevee components are covered under `Attribution-NonCommercial-ShareAlike 4.0 International`
+
+See [LICENSE](https://github.com/eeveebot/eevee/blob/main/LICENSE) for details.
