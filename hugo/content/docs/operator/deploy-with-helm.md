@@ -8,7 +8,7 @@ toc: true
 
 ## Deployment with Helm
 
-The `eevee-operator` helm chart is an opinionated deployment of `eevee-operator` and CRDs. It does not include a deployment of CR's for `eevee-bot` (`eevee` chart does that)
+The `eevee-operator` helm chart is an opinionated deployment of `eevee-operator` and CRDs. It does not include a deployment of CRs for `eevee-bot` (`eevee` chart does that)
 
 See [helm.eevee.bot](https://helm.eevee.bot) and [eeveebot/helm](https://github.com/eeveebot/helm) for details.
 
