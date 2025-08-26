@@ -1,6 +1,6 @@
 ---
 weight: 410
-title: "Deploy Operator with Kubectl"
+title: "Deploy Bot with Kubectl"
 description: "Ok, but what's the simple way?"
 draft: false
 toc: true
