@@ -5,6 +5,7 @@
   <meta property="og:description" content="one friendly bot" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://eevee.bot" />
+  <meta name="twitter:card" content="summary_large_image" />
   {{ $featured := resources.Get "/logo/eevee-card.png" }}
 
   {{ $font := resources.Get "/opengraph/poppins-bold.ttf" }}
@@ -58,6 +59,7 @@
   {{ end }}
   {{ $featured = $featured | images.Filter $filters }}
   <meta property="og:image" content="{{ $featured.Permalink }}"/>
+  <meta property="twitter:image" content="{{ $featured.Permalink }}"/>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
