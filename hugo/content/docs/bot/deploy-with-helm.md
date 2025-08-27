@@ -1,7 +1,7 @@
 ---
 weight: 420
 title: "Deploy Bot with Helm"
-description: "I have the Helm"
+description: "You have the conn"
 draft: false
 toc: true
 ---

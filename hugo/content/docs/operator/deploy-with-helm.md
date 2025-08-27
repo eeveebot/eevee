@@ -18,19 +18,15 @@ See [helm.eevee.bot](https://helm.eevee.bot) and [eeveebot/helm](https://github.
 ---
 # eevee-operator Helm values
 
-# Namespace for the operator
-operatorNamespace: eevee-system
-
-# Enable metrics (prometheus CRDs must be installed first)
+# Enable metrics - Prometheus CRDs must exist in cluster
 metrics:
   enabled: true
-
-# Enable IronLily CRD Deployment Job
-crds:
-  install: true
-
-# Enable deployment of the eevee-bot operator itself
+# Namespace for the operator
+operatorNamespace: eevee-system
+# Deploy the eevee-bot operator
 operator:
   enabled: true
-  replicas: 1
+# Run a CRD update job as a helm hook
+crds:
+  install: true
 ```

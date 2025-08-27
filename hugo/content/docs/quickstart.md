@@ -13,6 +13,9 @@ toc: true
 eevee is a microservices architecture chatbot framework that lives in k8s \
 and consists of independent modules that communicate through a common message bus, NATS
 
+> eevee is currently a WIP and is undergoing heavy development
+> Keep an eye on releases, we're getting towards a `1.0.0` soon!
+
 ---
 
 ## Helpful Links
