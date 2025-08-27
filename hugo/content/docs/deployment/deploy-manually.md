@@ -1,6 +1,6 @@
 ---
 weight: 110
-title: "Deploy eevee-bot with Kubectl"
+title: "With Kubectl"
 description: "Ok, but what's the simple way?"
 draft: false
 toc: true

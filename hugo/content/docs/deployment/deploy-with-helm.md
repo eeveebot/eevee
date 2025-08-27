@@ -1,6 +1,6 @@
 ---
 weight: 120
-title: "Deploy eevee-bot with Helm"
+title: "With Helm"
 description: "Full sails, cap'n"
 draft: false
 toc: true

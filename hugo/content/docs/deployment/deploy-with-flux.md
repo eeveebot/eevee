@@ -1,7 +1,7 @@
 ---
 weight: 420
-title: "Deploy eevee with FluxCD"
-description: "How to deploy the operator and an instance of the bot"
+title: "With FluxCD"
+description: "Gitops for your IRC bot."
 draft: false
 toc: true
 ---
