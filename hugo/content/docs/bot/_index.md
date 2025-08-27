@@ -1,7 +1,7 @@
 ---
 weight: 500
-title: "Deploying the Bot"
-description: "A robot is born"
+title: "Bot"
+description: "Beep Boop"
 draft: false
 toc: true
 ---
