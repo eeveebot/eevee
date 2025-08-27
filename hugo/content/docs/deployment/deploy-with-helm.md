@@ -8,7 +8,12 @@ toc: true
 
 ## Deployment with Helm
 
-The recommended method of deploying eevee is via Helm. This is how:
+The `eevee` helm chart is an opinionated deployment of `eevee-operator`, CRDs, and `eevee-bot`.
+
+See [helm.eevee.bot](https://helm.eevee.bot) and [eeveebot/helm](https://github.com/eeveebot/helm) for details.
+
+See [values.yaml](https://helm.eevee.bot/charts/eevee/values.yaml) for default values.
+
 
 ## Add helm repo
 
