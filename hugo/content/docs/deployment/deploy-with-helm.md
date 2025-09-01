@@ -1,5 +1,5 @@
 ---
-weight: 120
+weight: 110
 title: "With Helm"
 description: "Full sails, cap'n"
 draft: false

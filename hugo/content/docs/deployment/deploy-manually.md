@@ -1,5 +1,5 @@
 ---
-weight: 110
+weight: 130
 title: "With Kubectl"
 description: "Ok, but what's the simple way?"
 draft: false

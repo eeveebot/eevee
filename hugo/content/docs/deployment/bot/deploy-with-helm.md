@@ -1,5 +1,5 @@
 ---
-weight: 420
+weight: 161
 title: "Deploy Bot with Helm"
 description: "You have the conn"
 draft: false

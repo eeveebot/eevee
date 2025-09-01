@@ -1,5 +1,5 @@
 ---
-weight: 420
+weight: 162
 title: "Deploy Operator with FluxCD"
 description: "How to deploy the operator alone"
 draft: false

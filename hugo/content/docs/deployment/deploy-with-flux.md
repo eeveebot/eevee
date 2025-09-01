@@ -1,5 +1,5 @@
 ---
-weight: 420
+weight: 120
 title: "With FluxCD"
 description: "Gitops for your IRC bot."
 draft: false

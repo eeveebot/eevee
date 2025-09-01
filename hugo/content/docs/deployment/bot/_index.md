@@ -1,5 +1,5 @@
 ---
-weight: 500
+weight: 160
 title: "Bot"
 description: "Beep Boop"
 draft: false

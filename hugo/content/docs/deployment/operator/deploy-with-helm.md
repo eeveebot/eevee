@@ -1,5 +1,5 @@
 ---
-weight: 430
+weight: 151
 title: "Deploy Operator with Helm"
 description: "I have the Helm"
 draft: false

@@ -1,5 +1,5 @@
 ---
-weight: 410
+weight: 163
 title: "Deploy Bot with Kubectl"
 description: "Ok, but what's the simple way?"
 draft: false
