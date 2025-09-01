@@ -59,6 +59,8 @@ spec:
 
 To deploy the operator with FluxCD from manifests, add these manifests to flux-system Kustomization.
 
+Note that the [Kustomization](https://github.com/eeveebot/operator/blob/main/dist/kustomization.yaml) in the `dist/` directory of the operator includes CRDs.
+
 ```yaml
 ---
 apiVersion: source.toolkit.fluxcd.io/v1

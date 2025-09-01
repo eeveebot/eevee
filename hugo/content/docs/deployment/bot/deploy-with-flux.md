@@ -85,6 +85,6 @@ spec:
 
 ## Deployment with FluxCD - From Manifests
 
-To deploy the operator with FluxCD from manifests, see [bot/deploy-manually](/docs/bot/deploy-manually) and [custom-resources/crds](/docs/custom-resources/crds).
+To deploy the bot with FluxCD from manifests, see [bot/deploy-manually](/docs/bot/deploy-manually) and [custom-resources/crds](/docs/custom-resources/crds).
 
 Once you have generated those CR manifests, simply add them to your flux-system Kustomization.

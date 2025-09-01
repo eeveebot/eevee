@@ -97,6 +97,6 @@ spec:
 
 To deploy eevee with FluxCD from manifests, see [deployment/deploy-manually](/docs/deployment/deploy-manually) and [custom-resources/crds](/docs/custom-resources/crds).
 
-Once you have generated those CR manifests, simply add them to your flux-system Kustomization alongside the operator and CRD manifests.
+Once you have generated those CR manifests, simply add them to your flux-system Kustomization alongside the operator manifests.
 
-You may also use the eevee-operator git repository as a GitRepo source in Flux. See [operator/deploy-with-flux](/docs/operator/deploy-with-flux) for info on that.
+You may also use the eevee-operator git repository as a GitRepo source in Flux. See [deployment/operator/deploy-with-flux](/docs/deployment/operator/deploy-with-flux) for info on that.
