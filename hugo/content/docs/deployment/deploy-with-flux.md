@@ -48,7 +48,7 @@ spec:
       # Enable metrics - Prometheus CRDs must exist in cluster
       metrics:
         enabled: true
-    
+
     eevee-operator:
       # Namespace for the operator
       operatorNamespace: eevee-system
@@ -56,9 +56,11 @@ spec:
       operator:
         enabled: true
       # Run a CRD update job as a helm hook
+
+    eevee-crds:
       crds:
         install: true
-    
+
     eevee-bot:
       # Namespace for the bot instance
       botNamespace: eevee-bot
@@ -76,11 +78,11 @@ spec:
           # memoryStore:
           #   enabled: false
           #   maxSize: 512Mi
-    
+
       # Deploy toolbox
       toolbox:
         enabled: true
-    
+
     # Connectors to enable
       connectors:
         # IRC Connector instances to create

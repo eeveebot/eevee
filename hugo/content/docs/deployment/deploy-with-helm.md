@@ -53,7 +53,8 @@ eevee-operator:
     enabled: true
     replicas: 1
 
-  # Install CRDs
+# Install CRDs
+eevee-crds:
   crds:
     install: true
 
