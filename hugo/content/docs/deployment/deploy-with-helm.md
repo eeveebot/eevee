@@ -65,18 +65,6 @@ eevee-bot:
   # Deploy NATS cluster (disable if you want to bring your own)
   nats:
     enabled: true
-    jetstream:
-      fileStore:
-          dir: /data
-          enabled: true
-          pvc:
-            enabled: true
-            size: 10Gi
-            storageClassName: my-rwo-storage-class
-      memoryStore:
-        enabled: false
-        # ensure that container has a sufficient memory limit greater than maxSize
-        maxSize: 1Gi
   
   # Deploy toolbox
   toolbox:

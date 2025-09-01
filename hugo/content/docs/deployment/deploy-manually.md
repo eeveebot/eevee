@@ -64,14 +64,6 @@ metadata:
   name: nats-cluster
   namespace: my-eevee-bot
 spec:
-  config:
-    jetstream:
-      fileStore:
-          enabled: true
-          pvc:
-            enabled: true
-            size: 10Gi
-            storageClassName: my-rwo-storage-class
   namespaceOverride: my-eevee-bot
 ---
 apiVersion: eevee.bot/v1alpha1

@@ -67,17 +67,6 @@ spec:
       # Deploy NATS (disable if you want to bring your own)
       nats:
         enabled: true
-        jetstream:
-          fileStore:
-              enabled: true
-              pvc:
-                enabled: true
-                size: 10Gi
-                storageClassName: my-rwo-storage-class
-          # memoryStore is an option if you do not have PVC support in your k8s cluster
-          # memoryStore:
-          #   enabled: false
-          #   maxSize: 512Mi
 
       # Deploy toolbox
       toolbox:
