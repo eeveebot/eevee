@@ -20,8 +20,8 @@ First, a user sends a message to the chat. This could be through any supported m
 The message is heard by the appropriate module, which is responsible for handling the incoming messages from specific platforms (e.g., `irc-connector@thegooscloud`). This module formats the message into a standardized JSON payload and forwards it to the NATS message broker:
 
 ```yaml
-# Topic format: chat.message.incoming.$platform.$instance.$channel.$user
-# Example topic: chat.message.incoming.irc.eevee.#general.goos
+# Topic format: chat.message.incoming.$platform.$network.$instance.$channel.$user
+# Example topic: chat.message.incoming.irc.thegooscloud.eevee.#general.goos
 {
   "type": "message.incoming",
   "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed", # Unique trace ID for the message
@@ -72,7 +72,7 @@ The `router` module consumes the incoming message from NATS. The router performs
 The parsed `command.request` message is now delivered to the target module, which in this case is the `weather` module. This module performs the necessary action to fulfill the command, such as querying an external weather API. If the command requires a response, the module will construct and send a `command.response` message back to NATS:
 
 ```yaml
-# Topic: command.response
+# Topic: command.response.$trace
 {
   "channel": "#general", # Channel where the response should be sent
   "fromModule": "weather", # Module that processed the command
