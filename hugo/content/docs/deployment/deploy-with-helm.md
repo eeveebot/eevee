@@ -30,30 +30,7 @@ A minimal working example that leans on defaults:
 ```yaml
 ---
 # eevee Helm values
-
-global:
-  # Enable metrics
-  metrics:
-    enabled: true
-
-eevee-operator:
-  operator:
-    enabled: true
-
-# Install CRDs
-eevee-crds:
-  crds:
-    install: true
-
 eevee-bot:
-  # Deploy NATS cluster (disable if you want to bring your own)
-  nats:
-    enabled: true
-  
-  # Deploy toolbox
-  toolbox:
-    enabled: true
-  
   # Connectors to enable
   connectors:
     # IRC Connector instances to create
