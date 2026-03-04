@@ -1,7 +1,7 @@
 ---
 weight: 512
-title: "eevee.bot/v1/toolbox"
-description: ""
+title: "toolbox"
+description: "eevee.bot/v1/toolbox"
 draft: false
 ---
 

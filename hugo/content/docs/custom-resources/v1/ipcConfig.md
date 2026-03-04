@@ -1,7 +1,7 @@
 ---
 weight: 512
-title: "eevee.bot/v1/ipcConfig"
-description: ""
+title: "ipcConfig"
+description: "eevee.bot/v1/ipcConfig"
 draft: false
 ---
 

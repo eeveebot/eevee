@@ -1,7 +1,7 @@
 ---
 weight: 512
-title: "eevee.bot/v1/chatConnectionIrc"
-description: ""
+title: "chatConnectionIrc"
+description: "eevee.bot/v1/chatConnectionIrc"
 draft: false
 ---
 
