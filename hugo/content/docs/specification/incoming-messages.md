@@ -23,13 +23,16 @@ The message is heard by the appropriate module, which is responsible for handlin
 # Topic format: chat.message.incoming.$platform.$network.$instance.$channel.$user
 # Example topic: chat.message.incoming.irc.thegooscloud.eevee.#general.goos
 {
-  "type": "message.incoming",
+  "subject": "chat.message.incoming.irc.thegooscloud.eevee.#general.goos@honk"
+  "moduleUUID": <uuid of connector module>
+  "type": "chat.message.incoming",
   "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed", # Unique trace ID for the message
   "platform": "irc", # Platform the message came from
   "network": "thegooscloud", # Network identifier within the platform
   "instance": "eevee", # Instance identifier within the network
   "channel": "#general", # Channel where the message was posted
   "user": "goos", # User who sent the message
+  "userHost": "honk.com", # Hostmask of user
   "text": "!weather 12345", # Raw text of the message
   "raw_event": {}, # Placeholder for raw event data from the platform
 }
