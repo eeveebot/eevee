@@ -16,6 +16,7 @@ This file defines a Custom Resourceexample for an IRC chat connection in the eev
 - Environment variables (like NickServ authentication tokens)
 - Post-connect actions (authenticating with NickServ, joining channels, sending messages)
 - Command handling configuration
+- Container image specification
 
 The example demonstrates advanced features like referencing secrets for sensitive data (passwords, keys) and defining multiple post-connect actions.
 It also enables broadcasting of all received messages and sets up command processing with a common prefix regex.
@@ -29,6 +30,7 @@ metadata:
   namespace: my-eevee-bot
 spec:
   ipcConfig: my-eevee-bot
+  image: ghcr.io/eeveebot/connector-irc:latest
   # Connection list
   connections:
   # Display name for this network
