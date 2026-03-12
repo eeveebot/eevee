@@ -1,13 +1,13 @@
 ---
 weight: 512
-title: "chatConnectionIrc"
-description: "eevee.bot/v1/chatConnectionIrc"
+title: "chatconnectionirc"
+description: "eevee.bot/v1/chatconnectionirc"
 draft: false
 ---
 
-## `eevee.bot/v1/chatConnectionIrc`
+## `eevee.bot/v1/chatconnectionirc`
 
-This file defines a Custom Resourceexample for an IRC chat connection in the eevee.bot/v1 API. It shows how to configure a bot named "my-eevee-bot" to connect to an IRC network "my-irc-network" with settings such as:
+This file defines a Custom Resource example for an IRC chat connection in the eevee.bot/v1 API. It shows how to configure a bot named "my-eevee-bot" to connect to an IRC network "my-irc-network" with settings such as:
 
 - Server details (host, port, SSL)
 - Reconnection and rejoin behaviors
@@ -24,7 +24,7 @@ It also enables broadcasting of all received messages and sets up command proces
 ```yaml
 ---
 apiVersion: eevee.bot/v1
-kind: chatConnectionIrc
+kind: chatconnectionirc
 metadata:
   name: my-eevee-bot
   namespace: my-eevee-bot
@@ -77,16 +77,17 @@ spec:
     # Send a PM when we connect to the server
     # You can have the text of the message stored as a secret
     - action: msg
-      channel: 'nickserv' # irc-ism: no # means this is for a user (the nickserv bot in this case)
-      secretKeyRef:
-        secret:
-          name: my-irc-network-secrets
-        key: nickserv-ident-message # "identify MYTOKEN"
+      msg:
+        channel: 'nickserv' # irc-ism: no # means this is for a user (the nickserv bot in this case)
+        secretKeyRef:
+          secret:
+            name: my-irc-network-secrets
+          key: nickserv-ident-message # "identify MYTOKEN"
     # Join some channels
     - action: join
-      channels:
+      join:
       # Open channel
-       - channel: '#bots'
+      - channel: '#bots'
       # Channel that requires a key
       - channel: '#cool-kids-club'
         secretKeyRef:
@@ -95,8 +96,9 @@ spec:
           key: channel-key-cool-kids-club
     # You can also specify msg content as a string here
     - action: msg
-      channel: '#bots' # irc-ism: the # means this is for a channel
-      msg: hello world
+      msg:
+        channel: '#bots' # irc-ism: the # means this is for a channel
+        msg: hello world
     # Send broadcast events for all received messages
     broadcastMessages: true
     # Settings related to command modules
