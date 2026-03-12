@@ -17,6 +17,8 @@ This file defines a Custom Resource example for an IRC chat connection in the ee
 - Command handling configuration
 - Container image specification
 - Broadcast messages setting
+- Metrics enable/disable flag
+- Metrics port configuration
 
 The example demonstrates advanced features like referencing secrets for sensitive data (passwords, keys) and defining multiple post-connect actions.
 It also enables broadcasting of all received messages and sets up command processing with a common prefix regex.
@@ -31,6 +33,8 @@ metadata:
 spec:
   ipcConfig: my-eevee-bot
   image: ghcr.io/eeveebot/connector-irc:latest
+  metrics: false
+  metricsPort: 8080
   # Connection list
   connections:
   # Display name for this network

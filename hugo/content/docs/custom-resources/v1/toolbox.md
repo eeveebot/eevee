@@ -13,6 +13,7 @@ This file defines a Custom Resource example for the toolbox configuration in the
 - Image specification with registry and tag
 - Image pull policy for updating the container image
 - Metrics enable/disable flag
+- Metrics port configuration
 - IPC configuration name
 
 The example demonstrates the basic configuration needed to deploy the eevee toolbox component which provides utility functions and tools for the bot ecosystem.
@@ -29,5 +30,6 @@ spec:
   image: ghcr.io/eeveebot/cli:latest
   pullPolicy: Always
   metrics: false
+  metricsPort: 8080
   ipcConfig: my-eevee-bot
 ```
