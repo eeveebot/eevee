@@ -12,6 +12,7 @@ This file defines a Custom Resource example for the toolbox configuration in the
 - Size (number of replicas) for the toolbox deployment
 - Image specification with registry and tag
 - Image pull policy for updating the container image
+- Metrics enable/disable flag
 - IPC configuration name
 
 The example demonstrates the basic configuration needed to deploy the eevee toolbox component which provides utility functions and tools for the bot ecosystem.
@@ -25,7 +26,8 @@ metadata:
   namespace: my-eevee-bot
 spec:
   size: 1
-  image: ghcr.io/eeveebot/toolbox:latest
+  image: ghcr.io/eeveebot/cli:latest
   pullPolicy: Always
+  metrics: false
   ipcConfig: my-eevee-bot
 ```
