@@ -10,7 +10,7 @@ draft: false
 This file defines a Custom Resource example for the toolbox configuration in the eevee.bot/v1 API. It shows how to configure a bot named "my-eevee-bot" with settings such as:
 
 - Size (number of replicas) for the toolbox deployment
-- Container image specification with registry and tag
+- Image specification with registry and tag
 - Image pull policy for updating the container image
 - IPC configuration name
 
@@ -25,7 +25,7 @@ metadata:
   namespace: my-eevee-bot
 spec:
   size: 1
-  containerImage: ghcr.io/eeveebot/toolbox:latest
+  image: ghcr.io/eeveebot/toolbox:latest
   pullPolicy: Always
   ipcConfig: my-eevee-bot
 ```
