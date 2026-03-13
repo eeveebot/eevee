@@ -13,4 +13,8 @@ independently.
 
 ## Core Modules
 
-- [Admin](admin/) - Administration and configuration management
+- [admin](admin/) - Administration and configuration management
+
+## Fun Modules
+
+- [echo](echo/) - Hello?

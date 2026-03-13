@@ -1,11 +1,11 @@
 ---
 weight: 410
-title: "Admin Module"
+title: "admin"
 description: "Administration and configuration management for eevee.bot"
 draft: false
 ---
 
-# Admin Module
+# admin
 
 The Admin module provides administration and configuration management capabilities
 for eevee.bot. It handles authentication of administrative users and provides secure
