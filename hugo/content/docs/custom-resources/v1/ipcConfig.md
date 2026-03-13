@@ -5,8 +5,6 @@ description: "eevee.bot/v1/ipcconfig"
 draft: false
 ---
 
-## `eevee.bot/v1/ipcconfig`
-
 This file defines a Custom Resource example for IPC (Inter-Process Communication) configuration in the eevee.bot/v1 API. It shows how to configure a bot named "my-eevee-bot" to use NATS as its messaging system with settings such as:
 
 - Managed NATS deployment through eevee-operator

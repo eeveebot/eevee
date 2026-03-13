@@ -11,6 +11,4 @@ components in Kubernetes.
 ## Available CRDs
 
 - [botmodule](botmodule/) - Defines individual bot modules
-- [chatconnectionirc](chatconnectionirc/) - Defines IRC chat connections
 - [ipcconfig](ipcconfig/) - Defines Inter-Process Communication configuration
-- [toolbox](toolbox/) - Defines the toolbox component

@@ -5,8 +5,6 @@ description: "Administration and configuration management for eevee.bot"
 draft: false
 ---
 
-# admin
-
 The Admin module provides administration and configuration management capabilities
 for eevee.bot. It handles authentication of administrative users and provides secure
 access to administrative commands and functions.

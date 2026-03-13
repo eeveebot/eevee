@@ -5,8 +5,6 @@ description: "Simple message echoing functionality for eevee.bot"
 draft: false
 ---
 
-# echo
-
 The Echo module provides simple message echoing functionality for eevee.bot. It listens for messages beginning with "echo " and responds by sending the same message back to the originating channel.
 
 ## Features

@@ -5,8 +5,6 @@ description: "eevee.bot/v1/botmodule"
 draft: false
 ---
 
-## `eevee.bot/v1/botmodule`
-
 This file defines a Custom Resource for bot modules in the eevee.bot/v1 API. It shows how to configure a bot module with settings such as:
 
 - Number of instances to run
