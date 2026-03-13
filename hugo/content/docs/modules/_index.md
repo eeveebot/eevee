@@ -15,6 +15,10 @@ independently.
 
 - [admin](admin/) - Administration and configuration management
 
+## Chat Connectivity Modules
+
+- [connector-irc](connector-irc/) - IRC connectivity
+
 ## Fun Modules
 
-- [echo](echo/) - Hello?
+- [echo](echo/) - Simple message echoing functionality
