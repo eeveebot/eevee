@@ -13,5 +13,4 @@ components in Kubernetes.
 - [botmodule](botmodule/) - Defines individual bot modules
 - [chatconnectionirc](chatconnectionirc/) - Defines IRC chat connections
 - [ipcconfig](ipcconfig/) - Defines Inter-Process Communication configuration
-- [router](router/) - Defines the message routing component
 - [toolbox](toolbox/) - Defines the toolbox component
