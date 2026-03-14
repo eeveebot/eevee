@@ -205,6 +205,19 @@ update_version() {
   log "Updated $package_dir from $old_version to $new_version"
 }
 
+# Update version in package-lock.json
+update_lock_version() {
+  local package_dir="$1"
+  local new_version="$2"
+  
+  # Update version in package-lock.json if it exists
+  if [[ -f "$package_dir/package-lock.json" ]]; then
+    jq --arg version "$new_version" '.version = $version' "$package_dir/package-lock.json" > "$package_dir/package-lock.json.tmp" && \
+      mv "$package_dir/package-lock.json.tmp" "$package_dir/package-lock.json"
+    log "Updated package-lock.json version in $package_dir to $new_version"
+  fi
+}
+
 # Update dependency version in package.json
 update_dependency() {
   local package_dir="$1"
@@ -228,6 +241,16 @@ update_dependency() {
     jq --arg dep "$dependency_name" --arg version "^$new_version" '.devDependencies[$dep] = $version' "$package_dir/package.json" > "$package_dir/package.json.tmp" && \
       mv "$package_dir/package.json.tmp" "$package_dir/package.json"
     log "Updated $dependency_name devDependency in $package_dir to ^$new_version"
+  fi
+  
+  # Update dependency version in package-lock.json if it exists
+  if [[ -f "$package_dir/package-lock.json" ]]; then
+    # Update in dependencies section
+    if jq -e --arg dep "$dependency_name" '.packages[""].dependencies[$dep]' "$package_dir/package-lock.json" > /dev/null 2>&1; then
+      jq --arg dep "$dependency_name" --arg version "$new_version" '.packages[""].dependencies[$dep] = $version' "$package_dir/package-lock.json" > "$package_dir/package-lock.json.tmp" && \
+        mv "$package_dir/package-lock.json.tmp" "$package_dir/package-lock.json"
+      log "Updated $dependency_name version in $package_dir/package-lock.json to $new_version"
+    fi
   fi
 }
 
@@ -609,6 +632,7 @@ version_package() {
   
   # Update the package version
   update_version "$package_dir" "$new_version" || return 1
+  update_lock_version "$package_dir" "$new_version"
   
   # Track if helm changes were made
   local helm_changed=false
@@ -634,18 +658,7 @@ version_package() {
     fi
     helm_changed=true
   fi
-  
-# If this is the helm package, update the package.json version
-  if [[ "$package_name" == "helm" ]]; then
-    update_version "helm" "$new_version"
-    helm_changed=true
-  fi
-  
-  # If this package affects Helm, tag and push the helm repository
-  if package_affects_helm "$package_name"; then
-    tag_and_push_helm "$new_version" "$message"
-  fi
-  
+
   # If this is the library package, update all dependents
   if [[ "$package_name" == "$LIBRARY_PACKAGE" ]]; then
     log "Updating dependents of $package_name..."
@@ -654,25 +667,12 @@ version_package() {
         update_dependency "$dependent" "$LIBRARY_NAME" "$new_version" || warn "Failed to update dependency in $dependent"
       fi
     done
-    
-    # Run npm install in dependent packages to update package-lock.json
-    for dependent in "${DEPENDENT_PACKAGES[@]}"; do
-      if [[ -d "$dependent" ]]; then
-        log "Running npm install in $dependent to update lockfile..."
-        cd "$dependent" && npm install --package-lock-only && cd .. || warn "Failed to update lockfile in $dependent"
-      fi
-    done
   fi
   
   # Git operations for the main package
   git_add_commit "$package_dir" "$new_version" "$message" || warn "Git operations failed for $package_dir"
   git_tag_and_push "$package_dir" "$new_version" || warn "Git tag operations failed for $package_dir"
-  
-  # If this package affects Helm, tag and push the helm repository
-  if package_affects_helm "$package_name"; then
-    tag_and_push_helm "$new_version" "$message"
-  fi
-  
+
   success "Versioned $package_name to $new_version"
 }
 
@@ -693,6 +693,7 @@ version_all() {
     
     log "Versioning $LIBRARY_PACKAGE from $library_current_version to $library_new_version"
     update_version "$LIBRARY_PACKAGE" "$library_new_version" || return 1
+    update_lock_version "$LIBRARY_PACKAGE" "$library_new_version"
     
     # Update all dependents
     log "Updating dependents of $LIBRARY_PACKAGE..."
@@ -729,6 +730,7 @@ version_all() {
         local helm_new_version
         helm_new_version=$(increment_version "$helm_current_version" "$bump_type") || return 1
         update_version "$dir" "$helm_new_version" || return 1
+        update_lock_version "$dir" "$helm_new_version"
         git_add_commit "$dir" "$helm_new_version" "$message" || warn "Git operations failed for $dir"
         git_tag_and_push "$dir" "$helm_new_version" || warn "Git tag operations failed for $dir"
         helm_changed=true
@@ -793,16 +795,28 @@ show_status() {
       
       if [[ -d "$dir/.git" ]] || (cd "$dir" && git rev-parse --git-dir > /dev/null 2>&1); then
         # Count unstaged files (excluding untracked)
-        unstaged_count=$(cd "$dir" && git diff --name-only | wc -l | tr -d ' ')
+        tmp_count=$(cd "$dir" && git diff --name-only | wc -l)
+        unstaged_count=${tmp_count//[[:space:]]/}
         
         # Count staged files
-        staged_count=$(cd "$dir" && git diff --cached --name-only | wc -l | tr -d ' ')
+        tmp_count=$(cd "$dir" && git diff --cached --name-only | wc -l)
+        staged_count=${tmp_count//[[:space:]]/}
         
         # Count unpushed commits
-        unpushed_commits=$(cd "$dir" && git log --oneline @{u}..HEAD 2>/dev/null | wc -l | tr -d ' ') || unpushed_commits=0
+        tmp_count=$(cd "$dir" && git log --oneline @{u}..HEAD 2>/dev/null | wc -l)
+        unpushed_commits=${tmp_count//[[:space:]]/}
+        if [[ -z "$unpushed_commits" ]]; then
+            unpushed_commits=0
+        fi
         
         # Count unpushed tags
-        unpushed_tags=$(cd "$dir" && git push --tags --dry-run 2>&1 | grep -c "new tag" || echo "0")
+        local tag_output
+        tag_output=$(cd "$dir" && git push --tags --dry-run 2>/dev/null) || tag_output=""
+        if [[ -n "$tag_output" ]]; then
+            unpushed_tags=$(echo "$tag_output" | grep -c "new tag" 2>/dev/null || echo "0")
+        else
+            unpushed_tags="0"
+        fi
       else
         unstaged_count="-"
         staged_count="-"
@@ -811,7 +825,13 @@ show_status() {
       fi
       
       # Use shorter labels to prevent wrapping
-      printf "%-15s %-25s %-15s %-10s %-10s %-10s %-10s\n" "$dir" "$name" "$version" "$unstaged_count" "$staged_count" "$unpushed_commits" "$unpushed_tags"
+      # Clean all variables to ensure they don't contain extra characters
+      clean_unstaged="${unstaged_count//[[:space:]]/}"
+      clean_staged="${staged_count//[[:space:]]/}"
+      clean_unpushed="${unpushed_commits//[[:space:]]/}"
+      clean_tags="${unpushed_tags//[[:space:]]/}"
+      
+      printf "%-15s %-25s %-15s %-10s %-10s %-10s %-10s\n" "$dir" "$name" "$version" "$clean_unstaged" "$clean_staged" "$clean_unpushed" "$clean_tags"
     else
       printf "%-15s %-25s %-15s %-10s %-10s %-10s %-10s\n" "$dir" "$name" "Dir not found" "-" "-" "-" "-"
     fi
