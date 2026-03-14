@@ -41,6 +41,7 @@ PACKAGES=(
   "urltitle:@eeveebot/urltitle"
   "crds:@eeveebot/crds"
   "helm:@eeveebot/helm"
+  "docs:eevee-docs"
 )
 
 # Library package configuration
@@ -150,6 +151,23 @@ get_special_tag_suffix() {
 # Get current version of a package
 get_version() {
   local package_dir="$1"
+  
+  # Special handling for docs project
+  if [[ "$package_dir" == "docs" ]]; then
+    # Get the latest tag from the docs repository that follows semver pattern
+    local latest_tag
+    latest_tag=$(cd "$package_dir" && git tag -l | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1) || true
+    
+    # If no semver tags found, return default
+    if [[ -z "$latest_tag" ]]; then
+      echo "0.0.0"
+      return 0
+    fi
+    
+    echo "$latest_tag"
+    return 0
+  fi
+  
   if [[ ! -f "$package_dir/package.json" ]]; then
     error "package.json not found in $package_dir"
     return 1
@@ -162,6 +180,16 @@ get_version() {
 update_version() {
   local package_dir="$1"
   local new_version="$2"
+  
+  # Special handling for docs project
+  if [[ "$package_dir" == "docs" ]]; then
+    local old_version
+    old_version=$(get_version "$package_dir")
+    
+    # For docs, we don't update a package.json, we just create a git tag
+    log "Prepared $package_dir for versioning from $old_version to $new_version"
+    return 0
+  fi
   
   if [[ ! -f "$package_dir/package.json" ]]; then
     error "package.json not found in $package_dir"
@@ -417,12 +445,18 @@ git_add_commit() {
   
   cd "$package_dir" || return 1
   
-  # Add package.json
-  git add package.json
-  
-  # Add package-lock.json if it exists
-  if [[ -f "package-lock.json" ]]; then
-    git add package-lock.json
+  # Special handling for docs project
+  if [[ "$package_dir" == "docs" ]]; then
+    # For docs, we don't have specific files to add, just proceed with tagging
+    log "No files to commit for docs project, proceeding to tag creation"
+  else
+    # Add package.json
+    git add package.json
+    
+    # Add package-lock.json if it exists
+    if [[ -f "package-lock.json" ]]; then
+      git add package-lock.json
+    fi
   fi
   
   # Check if there are changes to commit
@@ -747,7 +781,7 @@ show_status() {
     if [[ -d "$dir" ]]; then
       # Get version
       local version="No package.json"
-      if [[ -f "$dir/package.json" ]]; then
+      if [[ -f "$dir/package.json" ]] || [[ "$dir" == "docs" ]]; then
         version=$(get_version "$dir" 2>/dev/null || echo "ERROR")
       fi
       
