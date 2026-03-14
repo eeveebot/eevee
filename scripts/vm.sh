@@ -917,8 +917,43 @@ git_push() {
     # Push changes for a specific project
     if [[ -d "$package_name" ]]; then
       log "Pushing changes in $package_name..."
-      cd "$package_name" && git push && cd ..
-      cd "$package_name" && git push --tags && cd ..
+      cd "$package_name" || return 1
+      
+      # Try to push, if it fails, do git pull --rebase and retry
+      if ! git push; then
+        log "Push failed, attempting git pull --rebase..."
+        if git pull --rebase; then
+          log "Rebase successful, retrying push..."
+          if ! git push; then
+            error "Push failed even after rebase in $package_name"
+            cd ..
+            return 1
+          fi
+        else
+          error "Failed to rebase in $package_name"
+          cd ..
+          return 1
+        fi
+      fi
+      
+      # Push tags
+      if ! git push --tags; then
+        log "Tag push failed, attempting git pull --rebase for tags..."
+        if git pull --rebase; then
+          log "Rebase successful, retrying tag push..."
+          if ! git push --tags; then
+            error "Tag push failed even after rebase in $package_name"
+            cd ..
+            return 1
+          fi
+        else
+          error "Failed to rebase for tags in $package_name"
+          cd ..
+          return 1
+        fi
+      fi
+      
+      cd ..
       success "Changes in $package_name have been pushed"
     else
       error "Directory $package_name does not exist"
@@ -927,6 +962,7 @@ git_push() {
   else
     # Push changes for all projects
     log "Pushing changes in all projects..."
+    local failed_projects=()
 
     # Push changes in each package directory
     for pkg in "${PACKAGES[@]}"; do
@@ -944,12 +980,48 @@ git_push() {
       
       if [[ "$excluded" == false && -d "$dir" ]]; then
         log "Pushing changes in $dir..."
-        cd "$dir" && git push && cd ..
-        cd "$dir" && git push --tags && cd ..
+        cd "$dir" || continue
+        
+        # Try to push, if it fails, do git pull --rebase and retry
+        if ! git push; then
+          log "Push failed, attempting git pull --rebase..."
+          if git pull --rebase; then
+            log "Rebase successful, retrying push..."
+            if ! git push; then
+              error "Push failed even after rebase in $dir"
+              failed_projects+=("$dir")
+            fi
+          else
+            error "Failed to rebase in $dir"
+            failed_projects+=("$dir")
+          fi
+        fi
+        
+        # Push tags
+        if ! git push --tags; then
+          log "Tag push failed, attempting git pull --rebase for tags..."
+          if git pull --rebase; then
+            log "Rebase successful, retrying tag push..."
+            if ! git push --tags; then
+              error "Tag push failed even after rebase in $dir"
+              failed_projects+=("$dir")
+            fi
+          else
+            error "Failed to rebase for tags in $dir"
+            failed_projects+=("$dir")
+          fi
+        fi
+        
+        cd ..
       fi
     done
     
-    success "Changes in all projects have been pushed"
+    if [[ ${#failed_projects[@]} -gt 0 ]]; then
+      error "Failed to push changes in the following projects: ${failed_projects[*]}"
+      return 1
+    else
+      success "Changes in all projects have been pushed"
+    fi
   fi
 }
 
