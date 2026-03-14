@@ -104,6 +104,7 @@ HELM_AFFECTING_PACKAGES=(
 # Packages that need special tag suffixes
 SPECIAL_TAG_SUFFIXES=(
   "crds:-build"
+  "helm:-build"
 )
 
 # Utility functions
