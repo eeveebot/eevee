@@ -1146,10 +1146,22 @@ main() {
       version_package "$package_name" "$bump_type" "$message"
       ;;
     version-all)
-      local bump_type="${1:-patch}"
-      local message="${2:-Bulk version bump $bump_type}"
-      # Shift past known arguments to pass remaining args (like --exclude) to version_all
-      shift 2 2>/dev/null || true
+      local bump_type="patch"
+      local message="Bulk version bump patch"
+      
+      # Parse arguments until we hit a flag or run out
+      if [[ $# -gt 0 && "$1" != --* ]]; then
+        bump_type="$1"
+        message="Bulk version bump $bump_type"
+        shift
+      fi
+      
+      if [[ $# -gt 0 && "$1" != --* ]]; then
+        message="$1"
+        shift
+      fi
+      
+      # Pass remaining args (including flags like --exclude) to version_all
       version_all "$bump_type" "$message" "$@"
       ;;
     stage-all)
