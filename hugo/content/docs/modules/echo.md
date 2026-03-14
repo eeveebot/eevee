@@ -44,5 +44,9 @@ botModules:
     ipcConfig: my-eevee-bot
     moduleName: echo
     moduleConfig: |
-      # Echo module configuration (currently empty)
+      ratelimit:
+        mode: drop
+        level: user
+        limit: 5
+        interval: 1m
 ```
