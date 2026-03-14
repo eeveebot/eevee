@@ -1,4 +1,10 @@
-# eevee
+---
+weight: 3
+title: "Helpful Links"
+description: "Lost? Here's your map!"
+draft: false
+toc: true
+---
 
 > eevee, the lovable chatbot framework!
 
@@ -33,13 +39,3 @@ and consists of independent modules that communicate through a common message bu
 | [**Tell**](https://github.com/eeveebot/tell) | [![Build](https://github.com/eeveebot/tell/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/tell/actions/workflows/build-image.yml) |
 | [**URL Title**](https://github.com/eeveebot/urltitle) | [![Build](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml) |
 | [**Weather**](https://github.com/eeveebot/weather) | [![Build](https://github.com/eeveebot/weather/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/weather/actions/workflows/build-image.yml) |
-
-## Getting Started
-
-Check out [quickstart](https://eevee.bot/docs/quickstart) for setup instructions.
-
-## License
-
-All eevee components are covered under `Attribution-NonCommercial-ShareAlike 4.0 International`
-
-See [LICENSE](https://github.com/eeveebot/eevee/blob/main/LICENSE) for details.
