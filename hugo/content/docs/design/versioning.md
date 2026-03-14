@@ -26,7 +26,19 @@ The master version manager is located at `./docs/scripts/vm.sh` in the root dire
 ./docs/scripts/vm.sh version <package-name> [bump-type] [commit-message]
 
 # Version all packages
-./docs/scripts/vm.sh version-all [bump-type] [commit-message]
+./docs/scripts/vm.sh version-all [bump-type] [commit-message] [--exclude package]...
+
+# Stage all files for a project or all projects
+./docs/scripts/vm.sh stage-all [package] [--exclude package]...
+
+# Push changes for a project or all projects
+./docs/scripts/vm.sh git-push [package] [--exclude package]...
+
+# Push tags for a project or all projects
+./docs/scripts/vm.sh git-push-tags [package] [--exclude package]...
+
+# Update libraries in all relevant packages
+./docs/scripts/vm.sh update-libraries [--exclude package]...
 
 # Show help
 ./docs/scripts/vm.sh help
@@ -49,6 +61,42 @@ The master version manager is located at `./docs/scripts/vm.sh` in the root dire
 
 # Version all packages with a patch bump
 ./docs/scripts/vm.sh version-all patch "Security updates"
+
+# Version all packages except docs and helm
+./docs/scripts/vm.sh version-all patch --exclude docs --exclude helm
+
+# Stage all files in all projects
+./docs/scripts/vm.sh stage-all
+
+# Stage all files in admin project
+./docs/scripts/vm.sh stage-all admin
+
+# Stage all files excluding docs and helm
+./docs/scripts/vm.sh stage-all --exclude docs --exclude helm
+
+# Push changes in all projects
+./docs/scripts/vm.sh git-push
+
+# Push changes in admin project
+./docs/scripts/vm.sh git-push admin
+
+# Push changes excluding docs and helm
+./docs/scripts/vm.sh git-push --exclude docs --exclude helm
+
+# Push tags in all projects
+./docs/scripts/vm.sh git-push-tags
+
+# Push tags in admin project
+./docs/scripts/vm.sh git-push-tags admin
+
+# Push tags excluding docs and helm
+./docs/scripts/vm.sh git-push-tags --exclude docs --exclude helm
+
+# Update libraries in all relevant packages
+./docs/scripts/vm.sh update-libraries
+
+# Update libraries excluding admin and cli
+./docs/scripts/vm.sh update-libraries --exclude admin --exclude cli
 ```
 
 ## Package Dependencies
@@ -56,7 +104,7 @@ The master version manager is located at `./docs/scripts/vm.sh` in the root dire
 The version manager automatically updates dependent packages when the `libeevee-js` library is versioned:
 
 - When `libeevee-js` is updated, all dependent packages have their `@eeveebot/libeevee` dependency version updated
-- Dependent packages include: admin, connector-irc, echo, router, operator, cli, calculator, dice, emote, weather, help, tell, urltitle, helm, crds
+- Dependent packages include: admin, connector-irc, echo, router, operator, cli, calculator, dice, emote, weather, help, tell, urltitle, crds, helm
 
 ## Backward Compatibility
 
@@ -64,17 +112,14 @@ Existing `tag-and-push.sh` scripts have been removed. Use the master version man
 
 ## Library Updates
 
-The `update-libraries.sh` script can be used to update npm dependencies:
+The `update-libraries` command can be used to update npm dependencies in relevant packages:
 
 ```bash
-# Update npm dependencies in all packages
-./update-libraries.sh
+# Update npm dependencies in all relevant packages
+./docs/scripts/vm.sh update-libraries
 
-# Version all packages
-./update-libraries.sh version-all
-
-# Version just the library package
-./update-libraries.sh version-library
+# Update npm dependencies excluding specific packages
+./docs/scripts/vm.sh update-libraries --exclude admin --exclude cli
 ```
 
 ## Workflow
@@ -88,7 +133,10 @@ The `update-libraries.sh` script can be used to update npm dependencies:
    - Update package.json versions
    - Update dependent package dependencies (when applicable)
    - Commit changes with appropriate messages
-   - Create and push git tags
+   - Create git tags locally (but does not automatically push)
+4. To push changes to remote repositories, use the git-push and git-push-tags commands:
+   - Push all changes: `./docs/scripts/vm.sh git-push`
+   - Push all tags: `./docs/scripts/vm.sh git-push-tags`
 
 ## Helm Chart Management
 
@@ -99,11 +147,13 @@ The version manager automatically handles Helm chart updates when relevant packa
 - When any command module (admin, calculator, cli, etc.) is versioned, the bot version in `helm/versions.yaml` is automatically incremented
 - When `operator` or `crds` versions change, the corresponding entries in `helm/versions.yaml` are automatically updated
 
-The Helm repository (separate git repository) is automatically tagged and pushed when any of these changes occur.
+The Helm repository (separate git repository) is automatically tagged when any of these changes occur, but tags must be pushed manually using `./docs/scripts/vm.sh git-push-tags helm`.
 
 ## Versioning Strategy
 
 - Library packages (`libeevee-js`) follow semantic versioning
 - Application packages follow semantic versioning
 - All packages are tagged with their version number (e.g., `1.2.3`)
-- Helm repository is tagged with version numbers following the pattern `v{package-version}` or `vhelm-{bump-type}-{timestamp}` for bulk updates
+- Some packages have special tag suffixes:
+  - `crds` and `helm` packages are tagged with `-build` suffix (e.g., `1.2.3-build`)
+- Helm repository is tagged with version numbers following the pattern `v{package-version}` or `v{bot-version}` for bulk updates

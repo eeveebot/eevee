@@ -206,16 +206,37 @@ update_version() {
   log "Updated $package_dir from $old_version to $new_version"
 }
 
-# Update version in package-lock.json
+# Custom npm install arguments for specific modules
+CUSTOM_NPM_ARGS=(
+  "crds:--legacy-peer-deps"
+)
+
+# Update version in package-lock.json by running npm install
 update_lock_version() {
   local package_dir="$1"
   local new_version="$2"
   
-  # Update version in package-lock.json if it exists
-  if [[ -f "$package_dir/package-lock.json" ]]; then
-    jq --arg version "$new_version" '.version = $version' "$package_dir/package-lock.json" > "$package_dir/package-lock.json.tmp" && \
-      mv "$package_dir/package-lock.json.tmp" "$package_dir/package-lock.json"
-    log "Updated package-lock.json version in $package_dir to $new_version"
+  # Update package-lock.json by running npm install if package.json exists
+  if [[ -f "$package_dir/package.json" ]]; then
+    log "Running npm install in $package_dir to update package-lock.json"
+    
+    # Check if there are custom arguments for this module
+    local custom_args=""
+    for entry in "${CUSTOM_NPM_ARGS[@]}"; do
+      IFS=':' read -r module args <<< "$entry"
+      if [[ "$module" == "$package_dir" ]]; then
+        custom_args="$args"
+        break
+      fi
+    done
+    
+    # Run npm install with or without custom arguments
+    if [[ -n "$custom_args" ]]; then
+      (cd "$package_dir" && npm install $custom_args)
+    else
+      (cd "$package_dir" && npm install)
+    fi
+    log "Updated package-lock.json in $package_dir via npm install"
   fi
 }
 
@@ -321,6 +342,46 @@ update_crds_helm_version() {
     log "Updated crds image tag to ${new_version} in $helm_file"
   else
     warn "Image line not found in $helm_file, skipping update"
+  fi
+}
+
+# Update module image tag in eevee.yaml
+update_module_image_tag() {
+  local package_name="$1"
+  local new_version="$2"
+  
+  local eevee_yaml="gitops/flux/eevee/deploy/eevee.yaml"
+  if [[ ! -f "$eevee_yaml" ]]; then
+    warn "Eevee YAML file $eevee_yaml not found, skipping image tag update"
+    return 0
+  fi
+  
+  # Mapping of package names to module names in eevee.yaml
+  local module_name=""
+  case "$package_name" in
+    "cli")
+      module_name="toolbox"
+      ;;
+    "connector-irc")
+      module_name="connector-irc-wetfish"
+      ;;
+    "admin"|"echo"|"router"|"calculator"|"dice"|"emote"|"weather"|"help"|"tell"|"urltitle")
+      module_name="$package_name"
+      ;;
+    *)
+      log "No mapping found for package $package_name, skipping image tag update"
+      return 0
+      ;;
+  esac
+  
+  # Update the image tag in eevee.yaml using yq
+  local image_repo="ghcr.io/eeveebot/${package_name}:${new_version}"
+  if yq eval ".spec.values.bot.botModules[] | select(.name == \"${module_name}\") | .spec.image = \"${image_repo}\"" "$eevee_yaml" > "${eevee_yaml}.tmp"; then
+    mv "${eevee_yaml}.tmp" "$eevee_yaml"
+    log "Updated $module_name image tag to ${new_version} in $eevee_yaml"
+  else
+    warn "Failed to update $module_name image tag in $eevee_yaml"
+    rm -f "${eevee_yaml}.tmp"
   fi
 }
 
@@ -605,6 +666,9 @@ version_package() {
       fi
     done
   fi
+  
+  # Update the module image tag in eevee.yaml
+  update_module_image_tag "$package_name" "$new_version"
   
   # Git operations for the main package
   git_add_commit "$package_dir" "$new_version" "$message" || warn "Git operations failed for $package_dir"
