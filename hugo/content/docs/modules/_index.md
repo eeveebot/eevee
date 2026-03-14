@@ -19,7 +19,19 @@ independently.
 
 - [connector-irc](connector-irc/) - IRC connectivity
 
+## Utility Modules
+
+- [calculator](calculator/) - Mathematical expression evaluator
+- [cli](cli/) - Command-line interface for eevee management
+- [crds](crds/) - Custom Resource Definitions for the eevee ecosystem
+- [help](help/) - Help documentation and !help command provider
+- [operator](operator/) - Kubernetes operator for managing eevee resources
+- [tell](tell/) - Interstellar answering machine for offline messaging
+- [urltitle](urltitle/) - Automatic URL title fetching for posted links
+- [weather](weather/) - Weather information provider
+
 ## Fun Modules
 
+- [dice](dice/) - Virtual dice roller with D&D style dice notation support
 - [echo](echo/) - Simple message echoing functionality
 - [emote](emote/) - Text-based emote commands

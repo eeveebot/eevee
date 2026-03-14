@@ -86,3 +86,14 @@ Default: "/data"
 
 #### `moduleConfig` (string)
 ModuleConfig is a passthrough field for arbitrary YAML configuration that will be passed directly to the module as a multi-line string
+
+#### `mountOperatorApiToken` (boolean)
+MountOperatorApiToken defines whether to mount the operator API token
+Default: false
+
+#### `enabled` (boolean)
+Enabled defines whether the botmodule is enabled or disabled
+Default: true
+
+#### `envSecret` (object)
+EnvSecret defines optional secrets to be injected as environment variables
