@@ -45,6 +45,11 @@ botModules:
         authentication:
           irc:
             hostmask: "root@localhost"
+      ratelimit:
+        mode: drop
+        level: user
+        limit: 5
+        interval: 1m
 ```
 
 ## Authentication Methods
