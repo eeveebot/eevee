@@ -22,20 +22,6 @@ The Admin module uses a YAML configuration file to define authorized administrat
 The configuration file should be mounted to the module container and referenced
 via the `MODULE_CONFIG_PATH` environment variable.
 
-Example configuration:
-
-```yaml
----
-admins:
-  - displayName: "root"
-    uuid: "123e4567-e89b-12d3-a456-426614174000"
-    acceptedPlatforms:
-      - "irc"
-    authentication:
-      irc:
-        hostmask: "user@host.tld"
-```
-
 To deploy the admin module, add it to your bot's `botModules` configuration with `moduleName: "admin"`:
 
 ```yaml
