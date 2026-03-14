@@ -22,3 +22,4 @@ independently.
 ## Fun Modules
 
 - [echo](echo/) - Simple message echoing functionality
+- [emote](emote/) - Text-based emote commands
