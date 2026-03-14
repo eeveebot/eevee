@@ -943,6 +943,7 @@ git_push() {
       if [[ "$excluded" == false && -d "$dir" ]]; then
         log "Pushing changes in $dir..."
         cd "$dir" && git push && cd ..
+        cd "$dir" && git push --tags && cd ..
       fi
     done
     
@@ -1175,7 +1176,6 @@ main() {
       # Shift past known arguments to pass remaining args (like --exclude) to git_push
       shift 1 2>/dev/null || true
       git_push "$package_name" "$@"
-      git_push_tags "$package_name" "$@"
       ;;
     update-libraries)
       update_libraries "$@"
