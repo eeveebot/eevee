@@ -1,0 +1,154 @@
+#compdef eeveevm
+
+local -a commands packages bump_types
+
+commands=(
+  'status:Show current versions and git status'
+  'version:Version a specific package (creates commits and tags, but does not push)'
+  'version-all:Version all packages (creates commits and tags, but does not push)'
+  'stage-all:Stage all files for a project or all projects'
+  'git-push:Push changes for a project or all projects'
+  'git-push-tags:Push tags for a project or all projects'
+  'update-libraries:Update libraries in all relevant packages'
+  'help:Show help'
+)
+
+# Extract package names from the PACKAGES array in vm.sh
+packages=(
+  'libeevee-js'
+  'admin'
+  'connector-irc'
+  'echo'
+  'router'
+  'operator'
+  'cli'
+  'calculator'
+  'dice'
+  'emote'
+  'weather'
+  'help'
+  'tell'
+  'urltitle'
+  'crds'
+  'helm'
+  'docs'
+)
+
+bump_types=('major' 'minor' 'patch')
+
+local -a common_options
+common_options=(
+  '--exclude[Exclude a package]:package:($packages)'
+)
+
+_vm_sh_version() {
+  _arguments -s : \
+    '1:package:($packages)' \
+    '2:bump type:($bump_types)' \
+    '*:message:'
+}
+
+_vm_sh_version_all() {
+  _arguments -s : \
+    '1:bump type:($bump_types)' \
+    '*:message:' \
+    $common_options
+}
+
+_vm_sh_stage_all() {
+  _arguments -s : \
+    '1:package:($packages)' \
+    $common_options
+}
+
+_vm_sh_git_push() {
+  _arguments -s : \
+    '1:package:($packages)' \
+    $common_options
+}
+
+_vm_sh_git_push_tags() {
+  _arguments -s : \
+    '1:package:($packages)' \
+    $common_options
+}
+
+_vm_sh_update_libraries() {
+  _arguments -s : \
+    $common_options
+}
+
+_vm_sh_commands() {
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  case "$words[1]" in
+    version)
+      _vm_sh_version
+      ;;
+    version-all)
+      _vm_sh_version_all
+      ;;
+    stage-all)
+      _vm_sh_stage_all
+      ;;
+    git-push)
+      _vm_sh_git_push
+      ;;
+    git-push-tags)
+      _vm_sh_git_push_tags
+      ;;
+    update-libraries)
+      _vm_sh_update_libraries
+      ;;
+    status|help)
+      # These commands don't take arguments
+      ;;
+    *)
+      _arguments -C \
+        ':command:->command' \
+        '*::options:->options'
+        
+      case $state in
+        command)
+          _describe 'commands' commands
+          ;;
+        options)
+          case $line[1] in
+            version)
+              _vm_sh_version
+              ;;
+            version-all)
+              _vm_sh_version_all
+              ;;
+            stage-all)
+              _vm_sh_stage_all
+              ;;
+            git-push)
+              _vm_sh_git_push
+              ;;
+            git-push-tags)
+              _vm_sh_git_push_tags
+              ;;
+            update-libraries)
+              _vm_sh_update_libraries
+              ;;
+          esac
+          ;;
+      esac
+      ;;
+  esac
+}
+
+_arguments -C \
+  ':command:->command' \
+  '*::options:->options'
+
+case $state in
+  command)
+    _describe 'commands' commands
+    ;;
+  options)
+    _vm_sh_commands
+    ;;
+esac
