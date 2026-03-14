@@ -41,7 +41,7 @@ spec:
       requests:
         storage: 1Gi
   volumeMountPath: /data
-  moduleConfig:
+  moduleConfig: |
     # Arbitrary configuration passed to the module
     setting1: value1
     setting2: value2
@@ -84,5 +84,5 @@ PersistentVolumeClaim defines the PVC configuration for the module
 VolumeMountPath defines where to mount the PVC in the container
 Default: "/data"
 
-#### `moduleConfig` (object)
-ModuleConfig is a passthrough field for arbitrary YAML configuration that will be passed directly to the module
+#### `moduleConfig` (string)
+ModuleConfig is a passthrough field for arbitrary YAML configuration that will be passed directly to the module as a multi-line string
