@@ -61,6 +61,11 @@ botModules:
           level: user
           limit: 3
           interval: 1m
+        moduleUptime:
+          mode: drop
+          level: user
+          limit: 3
+          interval: 1m
 ```
 
 ## Authentication Methods
