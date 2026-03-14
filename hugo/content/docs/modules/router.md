@@ -34,7 +34,8 @@ botModules:
     metricsPort: 8080
     ipcConfig: my-eevee-bot
     moduleName: router
-    moduleConfig: {}
+    moduleConfig: |
+      {}
 ```
 
 ## Functionality

@@ -34,7 +34,7 @@ botModules:
     metricsPort: 8080
     ipcConfig: my-eevee-bot
     moduleName: irc
-    moduleConfig:
+    moduleConfig: |
       connections:
       - name: my-irc-network
         enabled: true

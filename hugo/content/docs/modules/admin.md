@@ -31,10 +31,34 @@ admins:
     uuid: "123e4567-e89b-12d3-a456-426614174000"
     acceptedPlatforms:
       - "irc"
-      - "discord"
     authentication:
       irc:
-        hostmask: "nick!username@example.com"
+        hostmask: "user@host.tld"
+```
+
+To deploy the admin module, add it to your bot's `botModules` configuration with `moduleName: "admin"`:
+
+```yaml
+botModules:
+- name: admin
+  spec:
+    size: 1
+    image: ghcr.io/eeveebot/admin:latest
+    pullPolicy: Always
+    metrics: true
+    metricsPort: 8080
+    ipcConfig: my-eevee-bot
+    moduleName: admin
+    moduleConfig: |
+      admins:
+      - displayName: "root"
+        uuid: "123e4567-e89b-12d3-a456-426614174000"
+        acceptedPlatforms:
+        - "irc"
+        - "discord"
+        authentication:
+          irc:
+            hostmask: "root@localhost"
 ```
 
 ## Authentication Methods

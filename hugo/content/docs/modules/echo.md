@@ -27,3 +27,22 @@ The bot will respond with:
 ```none
 Hello, world!
 ```
+
+## Configuration
+
+To deploy the echo module, add it to your bot's `botModules` configuration with `moduleName: "echo"`:
+
+```yaml
+botModules:
+- name: echo
+  spec:
+    size: 1
+    image: ghcr.io/eeveebot/echo:latest
+    pullPolicy: Always
+    metrics: true
+    metricsPort: 8080
+    ipcConfig: my-eevee-bot
+    moduleName: echo
+    moduleConfig: |
+      # Echo module configuration (currently empty)
+```
