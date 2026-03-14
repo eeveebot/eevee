@@ -22,12 +22,13 @@ The Tell module is an interstellar answering machine that allows users to leave 
 
 To leave a message for someone who is not currently online:
 
-```
+```none
 tell <username> <message>
 ```
 
 Example:
-```
+
+```none
 tell alice Hey, check out this cool link!
 ```
 
@@ -35,12 +36,13 @@ tell alice Hey, check out this cool link!
 
 To remove a message you previously sent:
 
-```
+```none
 rmtell <message-id>
 ```
 
 Example:
-```
+
+```none
 rmtell a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
 

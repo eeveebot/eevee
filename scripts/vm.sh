@@ -39,6 +39,7 @@ PACKAGES=(
   "help:@eeveebot/help"
   "tell:@eeveebot/tell"
   "urltitle:@eeveebot/urltitle"
+  "seen:@eeveebot/seen"
   "crds:@eeveebot/crds"
   "helm:@eeveebot/helm"
   "docs:@eeveebot/docs"
@@ -63,6 +64,7 @@ DEPENDENT_PACKAGES=(
   "help"
   "tell"
   "urltitle"
+  "seen"
   "crds"
   "helm"
 )
@@ -78,6 +80,7 @@ COMMAND_MODULES=(
   "emote"
   "help"
   "router"
+  "seen"
   "tell"
   "urltitle"
   "weather"
@@ -96,6 +99,7 @@ HELM_AFFECTING_PACKAGES=(
   "help"
   "operator"
   "router"
+  "seen"
   "tell"
   "urltitle"
   "weather"
@@ -365,7 +369,7 @@ update_module_image_tag() {
     "connector-irc")
       module_name="connector-irc-wetfish"
       ;;
-    "admin"|"echo"|"router"|"calculator"|"dice"|"emote"|"weather"|"help"|"tell"|"urltitle")
+    "admin"|"echo"|"router"|"calculator"|"dice"|"emote"|"weather"|"help"|"tell"|"urltitle"|"seen")
       module_name="$package_name"
       ;;
     *)
@@ -1204,10 +1208,11 @@ update_libraries() {
     "emote"
     "help"
     "operator"
-    "router"
-    "tell"
-    "urltitle"
-    "weather"
+  "router"
+  "seen"
+  "tell"
+  "urltitle"
+  "weather"
   )
   
   local updated_count=0

@@ -31,6 +31,7 @@ and consists of independent modules that communicate through a common message bu
 | [**Operator**](https://github.com/eeveebot/operator) | [![Build Operator Image](https://github.com/eeveebot/operator/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/operator/actions/workflows/build-image.yml) |
 | [**Router**](https://github.com/eeveebot/router) | [![Build](https://github.com/eeveebot/router/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/router/actions/workflows/build-image.yml) |
 | [**Tell**](https://github.com/eeveebot/tell) | [![Build](https://github.com/eeveebot/tell/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/tell/actions/workflows/build-image.yml) |
+| [**Seen**](https://github.com/eeveebot/seen) | [![Build](https://github.com/eeveebot/seen/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/seen/actions/workflows/build-image.yml) |
 | [**URL Title**](https://github.com/eeveebot/urltitle) | [![Build](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml) |
 | [**Weather**](https://github.com/eeveebot/weather) | [![Build](https://github.com/eeveebot/weather/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/weather/actions/workflows/build-image.yml) |
 
