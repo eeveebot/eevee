@@ -41,7 +41,7 @@ PACKAGES=(
   "urltitle:@eeveebot/urltitle"
   "crds:@eeveebot/crds"
   "helm:@eeveebot/helm"
-  "docs:eevee-docs"
+  "docs:@eeveebot/docs"
 )
 
 # Library package configuration
@@ -424,40 +424,7 @@ tag_and_push_helm() {
   }
   log "Created tag $tag_name in helm repository"
   
-  # Push changes and tags to remote with retry logic
-  if (cd helm && git push); then
-    log "Pushed changes to helm repository"
-  else
-    warn "Failed to push changes to helm repository, attempting to pull and retry..."
-    if (cd helm && git pull --rebase); then
-      if (cd helm && git push); then
-        log "Successfully pushed changes to helm repository after rebase"
-      else
-        warn "Failed to push changes to helm repository after rebase"
-        return 1
-      fi
-    else
-      warn "Failed to rebase helm repository"
-      return 1
-    fi
-  fi
-  
-  if (cd helm && git push --tags); then
-    log "Pushed tags to helm repository"
-  else
-    warn "Failed to push tags to helm repository, attempting to pull and retry..."
-    if (cd helm && git pull --rebase); then
-      if (cd helm && git push --tags); then
-        log "Successfully pushed tags to helm repository after rebase"
-      else
-        warn "Failed to push tags to helm repository after rebase"
-        return 1
-      fi
-    else
-      warn "Failed to rebase helm repository"
-      return 1
-    fi
-  fi
+  log "Created tag for helm repository (use git-push subcommand to push changes)"
 }
 
 # Git operations
@@ -486,22 +453,11 @@ git_add_commit() {
   if ! git diff-index --quiet HEAD --; then
     local commit_message="${version} - ${message}"
     if git commit -m "$commit_message"; then
-      log "Committed changes in $package_dir"
+      log "Committed changes in $package_dir (use git-push subcommand to push changes)"
     else
-      warn "Failed to commit changes in $package_dir, attempting to pull and retry..."
-      if git pull --rebase; then
-        if git commit -m "$commit_message"; then
-          log "Successfully committed changes in $package_dir after rebase"
-        else
-          warn "Failed to commit changes in $package_dir after rebase"
-          cd - > /dev/null
-          return 1
-        fi
-      else
-        warn "Failed to rebase in $package_dir"
-        cd - > /dev/null
-        return 1
-      fi
+      warn "Failed to commit changes in $package_dir"
+      cd - > /dev/null
+      return 1
     fi
   else
     log "No changes to commit in $package_dir"
@@ -548,27 +504,7 @@ git_tag_and_push() {
     return 1
   fi
   
-  # Push tag with retry logic
-  if git push --tags; then
-    log "Pushed tag $tag_name in $package_dir"
-  else
-    warn "Failed to push tag $tag_name in $package_dir, attempting to pull and retry..."
-    if git pull --rebase; then
-      if git push --tags; then
-        log "Successfully pushed tag $tag_name in $package_dir after rebase"
-      else
-        error "Failed to push tag $tag_name in $package_dir after rebase"
-        git tag -d "$tag_name" 2>/dev/null || true
-        cd - > /dev/null
-        return 1
-      fi
-    else
-      error "Failed to rebase in $package_dir"
-      git tag -d "$tag_name" 2>/dev/null || true
-      cd - > /dev/null
-      return 1
-    fi
-  fi
+  log "Created tag $tag_name in $package_dir (use git-push-tags subcommand to push tags)"
   
   cd - > /dev/null || return 1
 }
@@ -673,19 +609,48 @@ version_package() {
   git_add_commit "$package_dir" "$new_version" "$message" || warn "Git operations failed for $package_dir"
   git_tag_and_push "$package_dir" "$new_version" || warn "Git tag operations failed for $package_dir"
 
-  success "Versioned $package_name to $new_version"
+  success "Versioned $package_name to $new_version (use git-push to push changes)"
 }
 
 # Version all packages
 version_all() {
   local bump_type="${1:-patch}"
   local message="${2:-Bulk version bump $bump_type}"
+  shift 2
+  local exclude_packages=()
+  
+  # Parse --exclude arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --exclude)
+        if [[ -n "$2" && "$2" != --* ]]; then
+          exclude_packages+=("$2")
+          shift 2
+        else
+          error "--exclude requires a package name"
+          return 1
+        fi
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
   
   log "Versioning all packages with $bump_type bump..."
   
-  # First, version the library package if it exists
+  # First, version the library package if it exists and is not excluded
   local library_new_version=""
-  if [[ -d "$LIBRARY_PACKAGE" ]]; then
+  local library_excluded=false
+  for excluded_pkg in "${exclude_packages[@]}"; do
+    if [[ "$LIBRARY_PACKAGE" == "$excluded_pkg" ]]; then
+      library_excluded=true
+      log "Skipping $LIBRARY_PACKAGE (excluded)"
+      break
+    fi
+  done
+  
+  if [[ "$library_excluded" == false && -d "$LIBRARY_PACKAGE" ]]; then
     local library_current_version
     library_current_version=$(get_version "$LIBRARY_PACKAGE") || return 1
     
@@ -698,7 +663,17 @@ version_all() {
     # Update all dependents
     log "Updating dependents of $LIBRARY_PACKAGE..."
     for dependent in "${DEPENDENT_PACKAGES[@]}"; do
-      if [[ -d "$dependent" ]]; then
+      # Check if dependent is excluded
+      local dependent_excluded=false
+      for excluded_pkg in "${exclude_packages[@]}"; do
+        if [[ "$dependent" == "$excluded_pkg" ]]; then
+          dependent_excluded=true
+          log "Skipping $dependent (excluded)"
+          break
+        fi
+      done
+      
+      if [[ "$dependent_excluded" == false && -d "$dependent" ]]; then
         update_dependency "$dependent" "$LIBRARY_NAME" "$library_new_version" || warn "Failed to update dependency in $dependent"
       fi
     done
@@ -707,7 +682,7 @@ version_all() {
     git_add_commit "$LIBRARY_PACKAGE" "$library_new_version" "$message" || warn "Git operations failed for $LIBRARY_PACKAGE"
     git_tag_and_push "$LIBRARY_PACKAGE" "$library_new_version" || warn "Git tag operations failed for $LIBRARY_PACKAGE"
     
-    success "Versioned $LIBRARY_PACKAGE to $library_new_version"
+    success "Versioned $LIBRARY_PACKAGE to $library_new_version (use git-push to push changes)"
   fi
   
   # Track if any helm changes were made during the process
@@ -719,6 +694,20 @@ version_all() {
     
     # Skip library package as we already handled it
     if [[ "$dir" == "$LIBRARY_PACKAGE" ]]; then
+      continue
+    fi
+    
+    # Check if this package should be excluded
+    local excluded=false
+    for excluded_pkg in "${exclude_packages[@]}"; do
+      if [[ "$dir" == "$excluded_pkg" ]]; then
+        excluded=true
+        log "Skipping $dir (excluded)"
+        break
+      fi
+    done
+    
+    if [[ "$excluded" == true ]]; then
       continue
     fi
     
@@ -734,7 +723,7 @@ version_all() {
         git_add_commit "$dir" "$helm_new_version" "$message" || warn "Git operations failed for $dir"
         git_tag_and_push "$dir" "$helm_new_version" || warn "Git tag operations failed for $dir"
         helm_changed=true
-        success "Versioned $dir to $helm_new_version"
+        success "Versioned $dir to $helm_new_version (use git-push to push changes)"
         continue
       fi
       
@@ -749,7 +738,7 @@ version_all() {
     fi
   done
   
-  # If helm was changed during the process, tag and push the helm repository
+  # If helm was changed during the process, tag the helm repository (use git-push to push)
   if [[ "$helm_changed" == true ]]; then
     # Use simple incremented version for helm tag when versioning all packages
     local versions_file="helm/versions.yaml"
@@ -767,7 +756,7 @@ version_all() {
     tag_and_push_helm "$helm_version" "$message"
   fi
   
-  success "All packages versioned successfully!"
+  success "All packages versioned successfully! (Use git-push and git-push-tags to push changes)"
 }
 
 # Show current status
@@ -841,6 +830,26 @@ show_status() {
 # Stage all files for a specific project or all projects
 stage_all_files() {
   local package_name="$1"
+  shift
+  local exclude_packages=()
+  
+  # Parse --exclude arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --exclude)
+        if [[ -n "$2" && "$2" != --* ]]; then
+          exclude_packages+=("$2")
+          shift 2
+        else
+          error "--exclude requires a package name"
+          return 1
+        fi
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
   
   if [[ -n "$package_name" ]]; then
     # Stage files for a specific project
@@ -859,7 +868,18 @@ stage_all_files() {
     # Stage files in each package directory
     for pkg in "${PACKAGES[@]}"; do
       IFS=':' read -r dir name <<< "$pkg"
-      if [[ -d "$dir" ]]; then
+      
+      # Check if this package should be excluded
+      local excluded=false
+      for excluded_pkg in "${exclude_packages[@]}"; do
+        if [[ "$dir" == "$excluded_pkg" ]]; then
+          excluded=true
+          log "Skipping $dir (excluded)"
+          break
+        fi
+      done
+      
+      if [[ "$excluded" == false && -d "$dir" ]]; then
         cd "$dir" && git add . && cd ..
       fi
     done
@@ -871,6 +891,26 @@ stage_all_files() {
 # Push changes for a specific project or all projects
 git_push() {
   local package_name="$1"
+  shift
+  local exclude_packages=()
+  
+  # Parse --exclude arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --exclude)
+        if [[ -n "$2" && "$2" != --* ]]; then
+          exclude_packages+=("$2")
+          shift 2
+        else
+          error "--exclude requires a package name"
+          return 1
+        fi
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
   
   if [[ -n "$package_name" ]]; then
     # Push changes for a specific project
@@ -889,7 +929,18 @@ git_push() {
     # Push changes in each package directory
     for pkg in "${PACKAGES[@]}"; do
       IFS=':' read -r dir name <<< "$pkg"
-      if [[ -d "$dir" ]]; then
+      
+      # Check if this package should be excluded
+      local excluded=false
+      for excluded_pkg in "${exclude_packages[@]}"; do
+        if [[ "$dir" == "$excluded_pkg" ]]; then
+          excluded=true
+          log "Skipping $dir (excluded)"
+          break
+        fi
+      done
+      
+      if [[ "$excluded" == false && -d "$dir" ]]; then
         log "Pushing changes in $dir..."
         cd "$dir" && git push && cd ..
       fi
@@ -902,6 +953,26 @@ git_push() {
 # Push tags for a specific project or all projects
 git_push_tags() {
   local package_name="$1"
+  shift
+  local exclude_packages=()
+  
+  # Parse --exclude arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --exclude)
+        if [[ -n "$2" && "$2" != --* ]]; then
+          exclude_packages+=("$2")
+          shift 2
+        else
+          error "--exclude requires a package name"
+          return 1
+        fi
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
   
   if [[ -n "$package_name" ]]; then
     # Push tags for a specific project
@@ -920,7 +991,18 @@ git_push_tags() {
     # Push tags in each package directory
     for pkg in "${PACKAGES[@]}"; do
       IFS=':' read -r dir name <<< "$pkg"
-      if [[ -d "$dir" ]]; then
+      
+      # Check if this package should be excluded
+      local excluded=false
+      for excluded_pkg in "${exclude_packages[@]}"; do
+        if [[ "$dir" == "$excluded_pkg" ]]; then
+          excluded=true
+          log "Skipping $dir (excluded)"
+          break
+        fi
+      done
+      
+      if [[ "$excluded" == false && -d "$dir" ]]; then
         log "Pushing tags in $dir..."
         cd "$dir" && git push --tags && cd ..
       fi
@@ -930,31 +1012,111 @@ git_push_tags() {
   fi
 }
 
+# Update libraries in all relevant packages
+update_libraries() {
+  local exclude_packages=()
+  
+  # Parse --exclude arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --exclude)
+        if [[ -n "$2" && "$2" != --* ]]; then
+          exclude_packages+=("$2")
+          shift 2
+        else
+          error "--exclude requires a package name"
+          return 1
+        fi
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+  
+  log "Updating libraries in all relevant packages..."
+  
+  # Packages that have the update-libraries script
+  local update_packages=(
+    "admin"
+    "calculator"
+    "cli"
+    "connector-irc"
+    "dice"
+    "echo"
+    "emote"
+    "help"
+    "operator"
+    "router"
+    "tell"
+    "urltitle"
+    "weather"
+  )
+  
+  local updated_count=0
+  
+  # Update libraries in each package
+  for package in "${update_packages[@]}"; do
+    # Check if this package should be excluded
+    local excluded=false
+    for excluded_pkg in "${exclude_packages[@]}"; do
+      if [[ "$package" == "$excluded_pkg" ]]; then
+        excluded=true
+        log "Skipping $package (excluded)"
+        break
+      fi
+    done
+    
+    if [[ "$excluded" == false && -d "$package" ]]; then
+      log "Updating libraries in $package..."
+      if cd "$package" && npm run update-libraries; then
+        cd ..
+        success "Libraries updated in $package"
+        ((updated_count++))
+      else
+        cd ..
+        error "Failed to update libraries in $package"
+      fi
+    elif [[ ! -d "$package" ]]; then
+      warn "Directory $package does not exist, skipping..."
+    fi
+  done
+  
+  success "Library updates completed in $updated_count packages"
+}
+
 # Show help
 show_help() {
   echo "
 Eevee Bot Version Manager
 
 Usage:
-  ./vm.sh status                    - Show current versions and git status
-  ./vm.sh version <package> [bump]  - Version a specific package
-  ./vm.sh version-all [bump]        - Version all packages
-  ./vm.sh stage-all [package]       - Stage all files for a project or all projects
-  ./vm.sh git-push [package]        - Push changes for a project or all projects
-  ./vm.sh git-push-tags [package]   - Push tags for a project or all projects
-  ./vm.sh help                      - Show this help
+  ./vm.sh status                           - Show current versions and git status
+  ./vm.sh version <package> [bump]         - Version a specific package (creates commits and tags, but does not push)
+  ./vm.sh version-all [bump] [--exclude package]... - Version all packages (creates commits and tags, but does not push)
+  ./vm.sh stage-all [package] [--exclude package]... - Stage all files for a project or all projects
+  ./vm.sh git-push [package] [--exclude package]... - Push changes for a project or all projects
+  ./vm.sh git-push-tags [package] [--exclude package]... - Push tags for a project or all projects
+  ./vm.sh update-libraries [--exclude package]... - Update libraries in all relevant packages
+  ./vm.sh help                             - Show this help
 
 Bump types: major, minor, patch (default: patch)
+
+Note: Versioning commands create commits and tags locally but do not automatically push.
+Use git-push and git-push-tags commands to push changes to remote repositories.
 
 Examples:
   ./vm.sh version admin patch "Fixed admin panel bug"
   ./vm.sh version-all minor "Added new features"
+  ./vm.sh version-all patch --exclude docs --exclude helm
   ./vm.sh stage-all                - Stage all files in all projects
   ./vm.sh stage-all admin          - Stage all files in admin project
+  ./vm.sh stage-all --exclude docs --exclude helm
   ./vm.sh git-push                 - Push changes in all projects
   ./vm.sh git-push admin           - Push changes in admin project
-  ./vm.sh git-push-tags            - Push tags in all projects
-  ./vm.sh git-push-tags admin      - Push tags in admin project
+  ./vm.sh git-push --exclude docs --exclude helm
+  ./vm.sh update-libraries         - Update libraries in all relevant packages
+  ./vm.sh update-libraries --exclude admin --exclude cli
   "
 }
 
@@ -966,38 +1128,45 @@ main() {
   fi
   
   local command="$1"
+  shift
   
   case "$command" in
     status)
       show_status
       ;;
     version)
-      if [[ $# -lt 2 ]]; then
+      if [[ $# -lt 1 ]]; then
         error "Package name required"
         show_help
         exit 1
       fi
-      local package_name="$2"
-      local bump_type="${3:-patch}"
-      local message="${4:-Version bump $bump_type}"
+      local package_name="$1"
+      local bump_type="${2:-patch}"
+      local message="${3:-Version bump $bump_type}"
       version_package "$package_name" "$bump_type" "$message"
       ;;
     version-all)
-      local bump_type="${2:-patch}"
-      local message="${3:-Bulk version bump $bump_type}"
-      version_all "$bump_type" "$message"
+      local bump_type="${1:-patch}"
+      local message="${2:-Bulk version bump $bump_type}"
+      # Shift past known arguments to pass remaining args (like --exclude) to version_all
+      shift 2 2>/dev/null || true
+      version_all "$bump_type" "$message" "$@"
       ;;
     stage-all)
-      local package_name="$2"
-      stage_all_files "$package_name"
+      local package_name="$1"
+      # Shift past known arguments to pass remaining args (like --exclude) to stage_all_files
+      shift 1 2>/dev/null || true
+      stage_all_files "$package_name" "$@"
       ;;
     git-push)
-      local package_name="$2"
-      git_push "$package_name"
+      local package_name="$1"
+      # Shift past known arguments to pass remaining args (like --exclude) to git_push
+      shift 1 2>/dev/null || true
+      git_push "$package_name" "$@"
+      git_push_tags "$package_name" "$@"
       ;;
-    git-push-tags)
-      local package_name="$2"
-      git_push_tags "$package_name"
+    update-libraries)
+      update_libraries "$@"
       ;;
     help)
       show_help
