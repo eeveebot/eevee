@@ -918,6 +918,7 @@ git_push() {
     if [[ -d "$package_name" ]]; then
       log "Pushing changes in $package_name..."
       cd "$package_name" && git push && cd ..
+      cd "$package_name" && git push --tags && cd ..
       success "Changes in $package_name have been pushed"
     else
       error "Directory $package_name does not exist"
