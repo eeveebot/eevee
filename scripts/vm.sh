@@ -1208,11 +1208,11 @@ update_libraries() {
     "emote"
     "help"
     "operator"
-  "router"
-  "seen"
-  "tell"
-  "urltitle"
-  "weather"
+    "router"
+    "seen"
+    "tell"
+    "urltitle"
+    "weather"
   )
   
   local updated_count=0

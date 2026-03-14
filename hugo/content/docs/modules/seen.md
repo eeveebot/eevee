@@ -5,13 +5,13 @@ description: "Track when users were last seen in channels"
 draft: false
 ---
 
-The Seen module tracks when users were last seen in channels, allowing other users to check when someone was last active.
+The Seen module tracks when users were last seen in channels, allowing other users to check when someone was last active. It also provides a `since` command to see who has been active in a specified time period.
 
 ## Features
 
 - Track user activity across channels
 - Check when a user was last seen with `seen <username>`
-- Automatic tracking of join/part/quit events
+- See who has been active recently with `since <minutes>`
 - Persistent storage using SQLite database
 - Rate limiting to prevent abuse
 - Multi-platform support
@@ -33,6 +33,22 @@ seen alice
 ```
 
 The bot will respond with information about when and where the user was last seen.
+
+### Check Who Has Been Active Recently
+
+To see who has been active in the last X minutes (up to 1440 minutes/24 hours):
+
+```none
+since <minutes>
+```
+
+Example:
+
+```none
+since 30
+```
+
+The bot will respond with a list of users who have been active in the last 30 minutes.
 
 ## Configuration
 
