@@ -35,6 +35,7 @@ botModules:
     metricsPort: 8080
     ipcConfig: my-eevee-bot
     moduleName: admin
+    mountOperatorApiToken: true
     moduleConfig: |
       admins:
       - displayName: "root"
@@ -62,6 +63,11 @@ botModules:
           limit: 3
           interval: 1m
         moduleUptime:
+          mode: drop
+          level: user
+          limit: 3
+          interval: 1m
+        moduleRestart:
           mode: drop
           level: user
           limit: 3
