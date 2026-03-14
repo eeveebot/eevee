@@ -32,7 +32,7 @@ and consists of independent modules that communicate through a common message bu
 | [**GitOps**](https://github.com/eeveebot/gitops) | --- |
 | [**Helm Git Repo**](https://github.com/eeveebot/helm) | [![Build](https://github.com/eeveebot/helm/actions/workflows/publish-charts.yml/badge.svg?branch=main)](https://github.com/eeveebot/helm/actions/workflows/publish-charts.yml) |
 | [**Help**](https://github.com/eeveebot/help) | [![Build](https://github.com/eeveebot/help/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/help/actions/workflows/build-image.yml) |
-| [**Libeevee-JS**](https://github.com/eeveebot/libeevee-js) | [![Node.js Package](https://github.com/eeveebot/libeevee-js/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/eeveebot/libeevee-js/actions/workflows/npm-publish.yml) |
+| [**Libeevee-JS**](https://github.com/eeveebot/libeevee-js) | [![Node.js Package](https://github.com/eeveebot/libeevee-js/actions/workflows/publish.yml/badge.svg)](https://github.com/eeveebot/libeevee-js/actions/workflows/publish.yml) |
 | [**MetaRepo**](https://github.com/eeveebot/eevee) | [![Build](https://github.com/eeveebot/eevee/actions/workflows/hugo.yaml/badge.svg?branch=main)](https://github.com/eeveebot/eevee/actions/workflows/hugo.yaml) |
 | [**Operator**](https://github.com/eeveebot/operator) | [![Build Operator Image](https://github.com/eeveebot/operator/actions/workflows/build-image.yaml/badge.svg)](https://github.com/eeveebot/operator/actions/workflows/build-image.yaml) |
 | [**Router**](https://github.com/eeveebot/router) | [![Build](https://github.com/eeveebot/router/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/router/actions/workflows/build-image.yml) |
