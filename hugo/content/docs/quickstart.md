@@ -26,13 +26,13 @@ and consists of independent modules that communicate through a common message bu
 | [**Connector-IRC**](https://github.com/eeveebot/connector-irc) | [![Build Image](https://github.com/eeveebot/connector-irc/actions/workflows/build-image.yaml/badge.svg)](https://github.com/eeveebot/connector-irc/actions/workflows/build-image.yaml) |
 | [**CLI**](https://github.com/eeveebot/cli) | [![Build NPM Package & Toolbox Image](https://github.com/eeveebot/cli/actions/workflows/workflow.yml/badge.svg)](https://github.com/eeveebot/cli/actions/workflows/workflow.yml) |
 | [**CRDS**](https://github.com/eeveebot/crds) | [![Build](https://github.com/eeveebot/crds/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/crds/actions/workflows/build.yml) [![Release](https://github.com/eeveebot/crds/actions/workflows/release.yml/badge.svg)](https://github.com/eeveebot/crds/actions/workflows/release.yml) |
-| [**Router**](https://github.com/eeveebot/router) | [![Build](https://github.com/eeveebot/router/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/router/actions/workflows/build.yml) |
-| [**URL Title**](https://github.com/eeveebot/urltitle) | [![Build](https://github.com/eeveebot/urltitle/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/urltitle/actions/workflows/build.yml) |
-| [**Weather**](https://github.com/eeveebot/weather) | [![Build](https://github.com/eeveebot/weather/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/weather/actions/workflows/build.yml) |
-| [**Admin**](https://github.com/eeveebot/admin) | [![Build](https://github.com/eeveebot/admin/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/admin/actions/workflows/build.yml) |
-| [**GitOps**](https://github.com/eeveebot/gitops) | [![Build](https://github.com/eeveebot/gitops/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/gitops/actions/workflows/build.yml) |
-| [**Emote**](https://github.com/eeveebot/emote) | [![Build](https://github.com/eeveebot/emote/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/emote/actions/workflows/build.yml) |
-| [**Dice**](https://github.com/eeveebot/dice) | [![Build](https://github.com/eeveebot/dice/actions/workflows/build.yml/badge.svg)](https://github.com/eeveebot/dice/actions/workflows/build.yml) |
+| [**Router**](https://github.com/eeveebot/router) | [![Build](https://github.com/eeveebot/router/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/router/actions/workflows/build-image.yml) |
+| [**URL Title**](https://github.com/eeveebot/urltitle) | [![Build](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml) |
+| [**Weather**](https://github.com/eeveebot/weather) | [![Build](https://github.com/eeveebot/weather/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/weather/actions/workflows/build-image.yml) |
+| [**Admin**](https://github.com/eeveebot/admin) | [![Build](https://github.com/eeveebot/admin/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/admin/actions/workflows/build-image.yml) |
+| [**GitOps**](https://github.com/eeveebot/gitops) | [![Build](https://github.com/eeveebot/gitops/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/gitops/actions/workflows/build-image.yml) |
+| [**Emote**](https://github.com/eeveebot/emote) | [![Build](https://github.com/eeveebot/emote/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/emote/actions/workflows/build-image.yml) |
+| [**Dice**](https://github.com/eeveebot/dice) | [![Build](https://github.com/eeveebot/dice/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/dice/actions/workflows/build-image.yml) |
 
 ## Getting Started
 
