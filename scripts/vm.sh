@@ -376,12 +376,30 @@ update_module_image_tag() {
   
   # Update the image tag in eevee.yaml using yq
   local image_repo="ghcr.io/eeveebot/${package_name}:${new_version}"
-  if yq eval ".spec.values.bot.botModules[] | select(.name == \"${module_name}\") | .spec.image = \"${image_repo}\"" "$eevee_yaml" > "${eevee_yaml}.tmp"; then
-    mv "${eevee_yaml}.tmp" "$eevee_yaml"
-    log "Updated $module_name image tag to ${new_version} in $eevee_yaml"
+  
+  # Create backup of original file
+  cp "$eevee_yaml" "${eevee_yaml}.backup"
+  
+  # Use yq to update the image tag in place
+  if yq eval "(.spec.values.bot.botModules[] | select(.name == \"${module_name}\") | .spec.image) |= \"${image_repo}\"" "$eevee_yaml" > "${eevee_yaml}.tmp" 2>/dev/null; then
+    # Check if the temp file has content before moving it
+    if [[ -s "${eevee_yaml}.tmp" ]]; then
+      mv "${eevee_yaml}.tmp" "$eevee_yaml"
+      rm -f "${eevee_yaml}.backup"
+      log "Updated $module_name image tag to ${new_version} in $eevee_yaml"
+    else
+      # Restore from backup if temp file is empty
+      warn "Update resulted in empty file, restoring from backup"
+      mv "${eevee_yaml}.backup" "$eevee_yaml"
+      rm -f "${eevee_yaml}.tmp"
+      return 1
+    fi
   else
     warn "Failed to update $module_name image tag in $eevee_yaml"
+    # Restore from backup on failure
+    mv "${eevee_yaml}.backup" "$eevee_yaml"
     rm -f "${eevee_yaml}.tmp"
+    return 1
   fi
 }
 
