@@ -373,9 +373,9 @@ update_module_image_tag() {
     "connector-irc")
       module_name="connector-irc-wetfish"
       ;;
-    "admin"|"echo"|"router"|"calculator"|"dice"|"emote"|"weather"|"help"|"tell"|"urltitle"|"seen")
-      module_name="$package_name"
-      ;;
+  "admin"|"echo"|"router"|"calculator"|"dice"|"emote"|"weather"|"help"|"tell"|"urltitle"|"seen"|"superslap")
+    module_name="$package_name"
+    ;;
     *)
       log "No mapping found for package $package_name, skipping image tag update"
       return 0
