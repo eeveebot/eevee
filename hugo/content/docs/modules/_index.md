@@ -35,3 +35,4 @@ independently.
 - [dice](dice/) - Virtual dice roller with D&D style dice notation support
 - [echo](echo/) - Simple message echoing functionality
 - [emote](emote/) - Text-based emote commands
+- [superslap](superslap/) - Various slap commands targeting users in a channel

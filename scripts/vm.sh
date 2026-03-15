@@ -43,6 +43,7 @@ PACKAGES=(
   "crds:@eeveebot/crds"
   "helm:@eeveebot/helm"
   "docs:@eeveebot/docs"
+  "superslap:@eeveebot/superslap"
 )
 
 # Library package configuration

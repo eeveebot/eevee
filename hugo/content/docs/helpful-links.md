@@ -39,3 +39,4 @@ and consists of independent modules that communicate through a common message bu
 | [**Tell**](https://github.com/eeveebot/tell) | [![Build](https://github.com/eeveebot/tell/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/tell/actions/workflows/build-image.yml) |
 | [**URL Title**](https://github.com/eeveebot/urltitle) | [![Build](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml) |
 | [**Weather**](https://github.com/eeveebot/weather) | [![Build](https://github.com/eeveebot/weather/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/weather/actions/workflows/build-image.yml) |
+| [**Superslap**](https://github.com/eeveebot/superslap) | [![Build Status](https://github.com/eeveebot/superslap/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/superslap/actions/workflows/build-image.yml) |
