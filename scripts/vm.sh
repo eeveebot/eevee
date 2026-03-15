@@ -28,6 +28,7 @@ PACKAGES=(
   "libeevee-js:@eeveebot/libeevee"
   "admin:@eeveebot/admin"
   "connector-irc:@eeveebot/connector-irc"
+  "connector-discord:@eeveebot/connector-discord"
   "echo:@eeveebot/echo"
   "router:@eeveebot/router"
   "operator:@eeveebot/operator"
@@ -54,6 +55,7 @@ LIBRARY_NAME="@eeveebot/libeevee"
 DEPENDENT_PACKAGES=(
   "admin"
   "connector-irc"
+  "connector-discord"
   "echo"
   "router"
   "operator"
@@ -77,6 +79,7 @@ COMMAND_MODULES=(
   "calculator"
   "cli"
   "connector-irc"
+  "connector-discord"
   "dice"
   "echo"
   "emote"
@@ -95,6 +98,7 @@ HELM_AFFECTING_PACKAGES=(
   "calculator"
   "cli"
   "connector-irc"
+  "connector-discord"
   "crds"
   "dice"
   "echo"
@@ -373,9 +377,12 @@ update_module_image_tag() {
     "connector-irc")
       module_name="connector-irc-wetfish"
       ;;
-  "admin"|"echo"|"router"|"calculator"|"dice"|"emote"|"weather"|"help"|"tell"|"urltitle"|"seen"|"superslap")
-    module_name="$package_name"
-    ;;
+    "connector-discord")
+      module_name="connector-discord"
+      ;;
+    "admin"|"echo"|"router"|"calculator"|"dice"|"emote"|"weather"|"help"|"tell"|"urltitle"|"seen"|"superslap")
+      module_name="$package_name"
+      ;;
     *)
       log "No mapping found for package $package_name, skipping image tag update"
       return 0
@@ -1207,6 +1214,7 @@ update_libraries() {
     "calculator"
     "cli"
     "connector-irc"
+  "connector-discord"
     "dice"
     "echo"
     "emote"

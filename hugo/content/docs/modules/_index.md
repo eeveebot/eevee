@@ -18,6 +18,7 @@ independently.
 ## Chat Connectivity Modules
 
 - [connector-irc](connector-irc/) - IRC connectivity
+- [connector-discord](connector-discord/) - Discord connectivity
 
 ## Utility Modules
 

@@ -470,6 +470,51 @@ bot:
               # Common prefix regex to add to registered command regexes
               commonPrefixRegex: "^-"
 
+    - name: connector-discord-main
+      spec:
+        # Number of module instances to deploy
+        size: 1
+        # Container image to use
+        image: ghcr.io/eeveebot/connector-discord:latest
+        # Image pull policy
+        pullPolicy: Always
+        # Enable metrics
+        metrics: true
+        # Metrics port
+        metricsPort: 8080
+        # IPC configuration name
+        ipcConfig: eevee-bot
+        # Module name - this identifies it as a Discord connector
+        moduleName: discord
+        # Discord configuration
+        moduleConfig: |
+          # List of Discord connections
+          connections:
+          # Display name for this guild (no . or * or > allowed)
+          - name: discord-main-guild
+            # Enable this connection
+            enabled: true
+            # Discord connection configuration
+            discord:
+              # Bot token (should be stored in a Kubernetes secret)
+              token: "YOUR_BOT_TOKEN_HERE"
+              autoReconnect: true
+              autoReconnectWait: 5000
+              autoReconnectMaxRetries: 10
+            # Actions to take after connecting
+            postConnect:
+            - # Join channels after connecting
+              action: join
+              join:
+              - channel: 'general'
+              - channel: 'bots'
+            # Send broadcast events for all received messages
+            broadcastMessages: true
+            # Settings related to command modules
+            commands:
+              # Common prefix regex to add to registered command regexes
+              commonPrefixRegex: "^-"
+
 ```
 
 This will deploy the eevee operator and all core modules to your Kubernetes cluster.

@@ -104,7 +104,7 @@ The master version manager is located at `./docs/scripts/vm.sh` in the root dire
 The version manager automatically updates dependent packages when the `libeevee-js` library is versioned:
 
 - When `libeevee-js` is updated, all dependent packages have their `@eeveebot/libeevee` dependency version updated
-- Dependent packages include: admin, connector-irc, echo, router, operator, cli, calculator, dice, emote, weather, help, tell, urltitle, crds, helm
+- Dependent packages include: admin, connector-irc, connector-discord, echo, router, operator, cli, calculator, dice, emote, weather, help, tell, urltitle, crds, helm
 
 ## Backward Compatibility
 

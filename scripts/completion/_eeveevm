@@ -18,6 +18,7 @@ packages=(
   'libeevee-js'
   'admin'
   'connector-irc'
+  'connector-discord'
   'echo'
   'router'
   'operator'
