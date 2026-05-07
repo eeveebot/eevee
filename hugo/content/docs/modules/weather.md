@@ -5,20 +5,22 @@ description: "Weather information provider using Pirate Weather API"
 draft: false
 ---
 
-The Weather module provides weather information using the Pirate Weather API. Users can get current weather conditions for any location worldwide.
+The Weather module provides weather information using the Pirate Weather API. Users can get current weather conditions and 5-day forecasts for any location worldwide.
 
 ## Features
 
 - Get current weather for any location (city, address, postal code, etc.)
+- Get 5-day forecast with `forecast` or `fivecast` commands
 - Stores user's location search string and coordinates in SQLite database
 - Rate limited to prevent abuse
 - Configurable through YAML configuration
 - Supports global locations
 - Cross-platform compatibility
+- IRC colorized output
 
 ## Usage
 
-### Getting Weather Information
+### Getting Current Weather
 
 To get weather information for a specific location:
 
@@ -31,7 +33,6 @@ Examples:
 weather New York
 weather London
 weather 10001
-weather Statue of Liberty
 ```
 
 If you've previously set a location, you can simply use:
@@ -39,44 +40,17 @@ If you've previously set a location, you can simply use:
 weather
 ```
 
-### How It Works
+### Getting a Forecast
 
-1. When a user provides a location string, it's converted to coordinates using OpenStreetMap Nominatim
-2. Both the original search string and coordinates are stored in a SQLite database for that user
-3. Subsequent requests without a location use the stored search string and coordinates
-4. Weather data is fetched from the Pirate Weather API using the coordinates
+To get a 5-day weather forecast:
 
-## Supported Location Formats
-
-You can use various location formats:
-- Postal codes (US, Canada, UK, etc.)
-- City names ("New York", "London", "Tokyo")
-- Addresses ("123 Main St, Anytown, ST")
-- Landmarks ("Statue of Liberty", "Eiffel Tower")
-
-## Configuration
-
-To deploy the weather module, add it to your bot's `botModules` configuration with `moduleName: "weather"`:
-
-```yaml
-botModules:
-- name: weather
-  spec:
-    size: 1
-    image: ghcr.io/eeveebot/weather:latest
-    pullPolicy: Always
-    metrics: true
-    metricsPort: 8080
-    ipcConfig: my-eevee-bot
-    moduleName: weather
-    moduleConfig: |
-      ratelimit:
-        mode: drop
-        level: user
-        limit: 5
-        interval: 1m
+```
+forecast [location]
+fivecast [location]
 ```
 
-## Environment Variables
+Both `forecast` and `fivecast` work identically. If you've previously set a location with the weather command, you can omit it.
+
+### Environment Variables
 
 - `PIRATE_WEATHER_API_KEY` - Pirate Weather API key (get one at https://pirateweather.net/)

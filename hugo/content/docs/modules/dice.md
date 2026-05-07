@@ -20,10 +20,10 @@ The Dice module provides virtual dice rolling functionality with support for D&D
 
 ## Usage
 
-Send a message beginning with `.roll` followed by dice notation to any channel where the bot is present:
+Send a message beginning with `roll` followed by dice notation to any channel where the bot is present (providing any platform prefix if required):
 
 ```none
-.roll 2d6
+roll 2d6
 ```
 
 The bot will respond with the individual dice rolls and total:
@@ -41,4 +41,34 @@ The bot will respond with the individual dice rolls and total:
 
 ### Examples
 
+```none
+roll 2d6
+roll 1d20+5
+roll 4d6k3
+roll 2d6!
+```
+
+## Configuration
+
+The dice module supports optional `maxDice` and `maxSides` configuration limits:
+
+```yaml
+botModules:
+- name: dice
+  spec:
+    size: 1
+    image: ghcr.io/eeveebot/dice:latest
+    pullPolicy: Always
+    metrics: true
+    metricsPort: 8080
+    ipcConfig: my-eevee-bot
+    moduleName: dice
+    moduleConfig: |
+      ratelimit:
+        mode: drop
+        level: user
+        limit: 10
+        interval: 1m
+      maxDice: 100
+      maxSides: 1000
 ```

@@ -8,7 +8,7 @@ toc: true
 
 Modules register commands they want to handle messages for as follows:
 
-Command registration allows modules to declare which messages they can process based on various criteria including the message content, platform, network, channel, and user. This flexible system enables precise control over when and where commands are triggered.
+Command registration allows modules to declare which messages they can process based on various criteria including the message content, platform, network, instance, channel, user, and nick. This flexible system enables precise control over when and where commands are triggered.
 
 When a message matches a registered command pattern, the router automatically routes it to the appropriate module for processing. This approach allows for distributed command handling across multiple modules while maintaining centralized routing logic.
 
@@ -26,6 +26,7 @@ Each module registers commands by publishing a message to the `command.register`
   "instance": "regex-pattern-for-instance",
   "channel": "regex-pattern-for-channel",
   "user": "regex-pattern-for-user",
+  "nick": "regex-pattern-for-nick",
   "regex": "regex-pattern-for-the-command-itself",
   "platformPrefixAllowed": true,
   "nickPrefixAllowed": true,
@@ -34,8 +35,7 @@ Each module registers commands by publishing a message to the `command.register`
     "level": "platform|instance|channel|user|global",
     "limit": 10,
     "interval": "30s"
-  },
-  "ttl": 3600000
+  }
 }
 ```
 
@@ -44,11 +44,12 @@ Each module registers commands by publishing a message to the `command.register`
 - `type`: Must be `"command.register"`
 - `commandUUID`: A unique UUID for this command registration
 - `commandDisplayName`: Optional display name for logs and UI
-- `platform`: Regex pattern to match the platform (e.g., `"^irc$"`, `"^discord$"`, `"^.*$"`)
-- `network`: Regex pattern to match the network within the platform
-- `instance`: Regex pattern to match the connection instance
-- `channel`: Regex pattern to match the channel
-- `user`: Regex pattern to match the user
+- `platform`: Regex pattern to match the platform (e.g., `"^irc$"`, `"^discord$"`, `"^.*$"`). Optional, defaults to `".*"`.
+- `network`: Regex pattern to match the network within the platform. Optional, defaults to `".*"`.
+- `instance`: Regex pattern to match the connection instance. Optional, defaults to `".*"`.
+- `channel`: Regex pattern to match the channel. Optional, defaults to `".*"`.
+- `user`: Regex pattern to match the user. Optional, defaults to `".*"`.
+- `nick`: Regex pattern to match the nick. Optional, defaults to `".*"`.
 - `regex`: Regex pattern to match the command itself
 - `platformPrefixAllowed`: Whether the platform's common prefix is allowed for this command
 - `nickPrefixAllowed`: Whether the bot's nickname can be used as a prefix for this command
@@ -57,7 +58,6 @@ Each module registers commands by publishing a message to the `command.register`
   - `level`: Scope of rate limiting (`"platform"`, `"instance"`, `"channel"`, `"user"`, or `"global"`)
   - `limit`: Number of allowed commands within the interval
   - `interval`: Time interval for rate limiting (e.g., `"30s"`, `"1m"`, `"5m"`)
-- `ttl`: Optional time-to-live in milliseconds for automatic expiration of the registration
 
 ## Example Command Registrations
 
@@ -86,8 +86,7 @@ This command matches messages like:
     "level": "channel",
     "limit": 10,
     "interval": "30s"
-  },
-  "ttl": 3600000
+  }
 }
 ```
 
@@ -118,8 +117,7 @@ This command matches messages like:
     "level": "user",
     "limit": 10,
     "interval": "10s"
-  },
-  "ttl": 3600000
+  }
 }
 ```
 
@@ -145,8 +143,7 @@ This command matches messages like:
   "regex": "^~admin .*$",
   "platformPrefixAllowed": false,
   "nickPrefixAllowed": false,
-  "ratelimit": false,
-  "ttl": 3600000
+  "ratelimit": false
 }
 ```
 
@@ -156,7 +153,7 @@ This example shows a highly restricted administrative command with exact matchin
 
 This "command" matches all messages:
 
-- In the `#general` channel of the `thegooscloud` network via the `irc` platform through the connection instance `eevee`.
+- In the `#general` channel of the `thegooscloud` network via the `irc` platform through the connection instance `eevee.
   
 ```json
 {
@@ -171,11 +168,14 @@ This "command" matches all messages:
   "regex": "^.*$",
   "platformPrefixAllowed": false,
   "nickPrefixAllowed": false,
-  "ratelimit": false,
-  "ttl": 3600000
+  "ratelimit": false
 }
 ```
 
+## Re-registration
+
+The router periodically prompts modules to re-register their commands by publishing to the `control.registerCommands` subject. Modules should subscribe to this subject and re-register their commands when prompted.
+
 ## Storage
 
-The registry component of the router stores these registrations in memory with automatic cleanup based on TTL. At runtime, it performs lookups based on these registrations to determine which registered commands should receive each incoming message.
+The registry component of the router stores these registrations in memory. At runtime, it performs lookups based on these registrations to determine which registered commands should receive each incoming message.

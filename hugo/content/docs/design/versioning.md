@@ -10,133 +10,25 @@ This document describes the version management system for the eevee.bot project 
 
 ## Overview
 
-The eevee.bot project uses a master versioning script to manage versions and git tags across all TypeScript packages in the workspace. The system ensures consistent versioning and handles dependency updates automatically.
+Each eevee module manages its own version independently via its `package.json`. Modules with shared dependencies (e.g., `@eeveebot/libeevee`) can use the `npm run update-libraries` script available in each package to bump shared dependency versions.
 
-## Master Version Manager
+> **Note:** A master versioning script (`vm.sh`) was previously used to coordinate version bumps across all packages but has been removed. The versioning workflow below describes the manual process for versioning individual packages.
 
-The master version manager is located at `./docs/scripts/vm.sh` in the root directory.
+## Versioning Workflow
 
-### Usage
+1. Make your code changes
+2. Update the version in the module's `package.json`
+3. Commit with an appropriate message
+4. Tag the commit with the version number
+5. Push changes and tags to the remote repository
 
-```bash
-# Show current versions of all packages
-./docs/scripts/vm.sh status
+### Updating Dependencies
 
-# Version a specific package
-./docs/scripts/vm.sh version <package-name> [bump-type] [commit-message]
-
-# Version all packages
-./docs/scripts/vm.sh version-all [bump-type] [commit-message] [--exclude package]...
-
-# Stage all files for a project or all projects
-./docs/scripts/vm.sh stage-all [package] [--exclude package]...
-
-# Push changes for a project or all projects
-./docs/scripts/vm.sh git-push [package] [--exclude package]...
-
-# Push tags for a project or all projects
-./docs/scripts/vm.sh git-push-tags [package] [--exclude package]...
-
-# Update libraries in all relevant packages
-./docs/scripts/vm.sh update-libraries [--exclude package]...
-
-# Show help
-./docs/scripts/vm.sh help
-```
-
-### Bump Types
-
-- `patch` - Increment the patch version (0.0.x) - default
-- `minor` - Increment the minor version (0.x.0)
-- `major` - Increment the major version (x.0.0)
-
-### Examples
-
-```bash
-# Version the admin package with a patch bump
-./docs/scripts/vm.sh version admin patch "Fixed admin panel bug"
-
-# Version the libeevee-js library with a minor bump
-./docs/scripts/vm.sh version libeevee-js minor "Added new utility functions"
-
-# Version all packages with a patch bump
-./docs/scripts/vm.sh version-all patch "Security updates"
-
-# Version all packages except docs and helm
-./docs/scripts/vm.sh version-all patch --exclude docs --exclude helm
-
-# Stage all files in all projects
-./docs/scripts/vm.sh stage-all
-
-# Stage all files in admin project
-./docs/scripts/vm.sh stage-all admin
-
-# Stage all files excluding docs and helm
-./docs/scripts/vm.sh stage-all --exclude docs --exclude helm
-
-# Push changes in all projects
-./docs/scripts/vm.sh git-push
-
-# Push changes in admin project
-./docs/scripts/vm.sh git-push admin
-
-# Push changes excluding docs and helm
-./docs/scripts/vm.sh git-push --exclude docs --exclude helm
-
-# Push tags in all projects
-./docs/scripts/vm.sh git-push-tags
-
-# Push tags in admin project
-./docs/scripts/vm.sh git-push-tags admin
-
-# Push tags excluding docs and helm
-./docs/scripts/vm.sh git-push-tags --exclude docs --exclude helm
-
-# Update libraries in all relevant packages
-./docs/scripts/vm.sh update-libraries
-
-# Update libraries excluding admin and cli
-./docs/scripts/vm.sh update-libraries --exclude admin --exclude cli
-```
+Each package with `@eeveebot/libeevee` as a dependency has an `npm run update-libraries` script that updates core eevee libraries to their latest versions.
 
 ## Package Dependencies
 
-The version manager automatically updates dependent packages when the `libeevee-js` library is versioned:
-
-- When `libeevee-js` is updated, all dependent packages have their `@eeveebot/libeevee` dependency version updated
-- Dependent packages include: admin, connector-irc, connector-discord, echo, router, operator, cli, calculator, dice, emote, weather, help, tell, urltitle, crds, helm
-
-## Backward Compatibility
-
-Existing `tag-and-push.sh` scripts have been removed. Use the master version manager directly instead.
-
-## Library Updates
-
-The `update-libraries` command can be used to update npm dependencies in relevant packages:
-
-```bash
-# Update npm dependencies in all relevant packages
-./docs/scripts/vm.sh update-libraries
-
-# Update npm dependencies excluding specific packages
-./docs/scripts/vm.sh update-libraries --exclude admin --exclude cli
-```
-
-## Workflow
-
-1. Make your code changes
-2. Use the version manager to bump versions:
-   - For library changes: `./docs/scripts/vm.sh version libeevee-js [bump-type]`
-   - For individual package changes: `./docs/scripts/vm.sh version <package> [bump-type]`
-   - For coordinated releases: `./docs/scripts/vm.sh version-all [bump-type]`
-3. The script will:
-   - Update package.json versions
-   - Update dependent package dependencies (when applicable)
-   - Commit changes with appropriate messages
-   - Create git tags locally (but does not automatically push)
-4. To push changes to remote repositories, use the git-push and git-push-tags commands:
-   - Push all changes: `./docs/scripts/vm.sh git-push`
-   - Push all tags: `./docs/scripts/vm.sh git-push-tags`
+When `libeevee-js` is updated, dependent packages should have their `@eeveebot/libeevee` dependency version updated. Dependent packages include: admin, connector-irc, connector-discord, echo, router, operator, cli, calculator, dice, emote, weather, help, tell, urltitle, crds, helm.
 
 ## Helm Chart Management
 

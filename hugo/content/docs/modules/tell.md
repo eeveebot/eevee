@@ -11,6 +11,7 @@ The Tell module is an interstellar answering machine that allows users to leave 
 
 - Leave messages for offline users with `tell <username> <message>`
 - Delete your own messages with `rmtell <message-id>`
+- List your pending messages with `list-tells`
 - Automatic delivery of pending messages when users are active
 - Persistent storage using SQLite database
 - Rate limiting to prevent abuse
@@ -47,6 +48,16 @@ rmtell a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
 
 The message ID is provided when your message is stored for delivery to the recipient.
+
+### Listing Your Pending Messages
+
+To see your pending tell messages:
+
+```none
+list-tells
+```
+
+The bot will respond with a list of your pending messages and their IDs.
 
 ## Configuration
 

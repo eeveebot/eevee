@@ -82,7 +82,7 @@ bot:
         # Number of toolbox instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/cli:1.2.9
+        image: ghcr.io/eeveebot/cli:1.2.15
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -98,7 +98,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/router:1.2.15
+        image: ghcr.io/eeveebot/router:2.4.3
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -123,7 +123,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/admin:1.2.19
+        image: ghcr.io/eeveebot/admin:2.3.1
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -189,7 +189,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/echo:1.2.10
+        image: ghcr.io/eeveebot/echo:1.2.15
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -212,7 +212,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/emote:1.2.9
+        image: ghcr.io/eeveebot/emote:1.2.15
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -233,7 +233,7 @@ bot:
     - name: seen
       spec:
         size: 1
-        image: ghcr.io/eeveebot/seen:1.1.3
+        image: ghcr.io/eeveebot/seen:1.3.8
         pullPolicy: Always
         metrics: true
         metricsPort: 8080
@@ -258,7 +258,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/help:2.2.11
+        image: ghcr.io/eeveebot/help:2.3.2
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -281,7 +281,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/calculator:1.2.9
+        image: ghcr.io/eeveebot/calculator:1.3.3
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -304,7 +304,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/dice:1.2.9
+        image: ghcr.io/eeveebot/dice:1.3.1
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -327,7 +327,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/urltitle:2.2.8
+        image: ghcr.io/eeveebot/urltitle:2.4.3
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -352,7 +352,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/weather:1.2.9
+        image: ghcr.io/eeveebot/weather:1.3.5
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -385,7 +385,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/tell:2.2.15
+        image: ghcr.io/eeveebot/tell:2.2.22
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -416,7 +416,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/connector-irc:1.2.8
+        image: ghcr.io/eeveebot/connector-irc:1.5.6
         # Image pull policy
         pullPolicy: Always
         # Enable metrics
@@ -475,7 +475,7 @@ bot:
         # Number of module instances to deploy
         size: 1
         # Container image to use
-        image: ghcr.io/eeveebot/connector-discord:latest
+        image: ghcr.io/eeveebot/connector-discord:1.2.15
         # Image pull policy
         pullPolicy: Always
         # Enable metrics

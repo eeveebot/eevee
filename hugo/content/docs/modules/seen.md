@@ -5,16 +5,18 @@ description: "Track when users were last seen in channels"
 draft: false
 ---
 
-The Seen module tracks when users were last seen in channels, allowing other users to check when someone was last active. It also provides a `since` command to see who has been active in a specified time period.
+The Seen module tracks when users were last seen in channels, allowing other users to check when someone was last active. It also provides a `since` command to see who has been active in a specified time period and a `lurkers` command to list inactive users.
 
 ## Features
 
 - Track user activity across channels
 - Check when a user was last seen with `seen <username>`
 - See who has been active recently with `since <minutes>`
+- List inactive users with `lurkers`
 - Persistent storage using SQLite database
 - Rate limiting to prevent abuse
 - Multi-platform support
+- IRC colorized output
 
 ## Usage
 
@@ -49,6 +51,16 @@ since 30
 ```
 
 The bot will respond with a list of users who have been active in the last 30 minutes.
+
+### List Inactive Users (Lurkers)
+
+To see who has not been active recently:
+
+```none
+lurkers
+```
+
+The bot will respond with a list of users who have not been seen recently in the channel.
 
 ## Configuration
 

@@ -31,8 +31,8 @@ Each module registers for broadcasts by publishing a message to the `broadcast.r
   "instance": "regex-pattern-for-instance",
   "channel": "regex-pattern-for-channel",
   "user": "regex-pattern-for-user",
-  "messageFilterRegex": "optional-regex-to-filter-message-content",
-  "ttl": 3600000
+  "nick": "regex-pattern-for-nick",
+  "messageFilterRegex": "optional-regex-to-filter-message-content"
 }
 ```
 
@@ -41,13 +41,13 @@ Each module registers for broadcasts by publishing a message to the `broadcast.r
 - `type`: Must be `"broadcast.register"`
 - `broadcastUUID`: A unique UUID for this broadcast registration
 - `broadcastDisplayName`: Optional display name for logs and UI
-- `platform`: Regex pattern to match the platform (e.g., `"^irc$"`, `"^discord$"`, `"^.*$"`)
-- `network`: Regex pattern to match the network within the platform
-- `instance`: Regex pattern to match the connection instance
-- `channel`: Regex pattern to match the channel
-- `user`: Regex pattern to match the user
+- `platform`: Regex pattern to match the platform (e.g., `"^irc$"`, `"^discord$"`, `"^.*$"`). Optional, defaults to `".*"`.
+- `network`: Regex pattern to match the network within the platform. Optional, defaults to `".*"`.
+- `instance`: Regex pattern to match the connection instance. Optional, defaults to `".*"`.
+- `channel`: Regex pattern to match the channel. Optional, defaults to `".*"`.
+- `user`: Regex pattern to match the user. Optional, defaults to `".*"`.
+- `nick`: Regex pattern to match the nick. Optional, defaults to `".*"`.
 - `messageFilterRegex`: Optional regex pattern to filter messages by content
-- `ttl`: Optional time-to-live in milliseconds for automatic expiration of the registration (default: 120000ms)
 
 ## Example Broadcast Registrations
 
@@ -64,12 +64,11 @@ This broadcast listener receives all messages across all platforms:
   "network": "^.*$",
   "instance": "^.*$",
   "channel": "^.*$",
-  "user": "^.*$",
-  "ttl": 3600000
+  "user": "^.*$"
 }
 ```
 
-This example uses `^.*$` patterns to match everything, making it a global listener. The TTL is set to 3600000ms (1 hour), which is much longer than the default, ensuring the registration persists for extended logging sessions.
+This example uses `^.*$` patterns to match everything, making it a global listener.
 
 ### IRC Channel Monitor
 
@@ -85,8 +84,7 @@ This broadcast listener receives all messages in IRC channels matching a specifi
   "instance": "^.*$",
   "channel": "^#general$",
   "user": "^.*$",
-  "messageFilterRegex": ".*(error|warning|critical).*",
-  "ttl": 3600000
+  "messageFilterRegex": ".*(error|warning|critical).*"
 }
 ```
 
@@ -105,8 +103,7 @@ This broadcast listener receives all messages from specific users:
   "network": "^.*$",
   "instance": "^.*$",
   "channel": "^.*$",
-  "user": "^important_user$",
-  "ttl": 3600000
+  "user": "^important_user$"
 }
 ```
 
@@ -131,7 +128,7 @@ When a message matches a registered broadcast listener, the router publishes the
 
 ## Automatic Re-registration
 
-Broadcast registrations automatically expire after their TTL period. To prevent gaps in message delivery, the router will prompt modules to re-register broadcasts approximately halfway through their TTL by publishing to:
+The router periodically prompts modules to re-register broadcasts by publishing to:
 
 - `control.registerBroadcasts` (general prompt)
 - `control.registerBroadcasts.$broadcastDisplayName` (specific prompt, if displayName is provided)
@@ -140,4 +137,4 @@ Modules should subscribe to these subjects and re-register their broadcasts when
 
 ## Storage
 
-The registry component of the router stores these registrations in memory with automatic cleanup based on TTL. At runtime, it performs lookups based on these registrations to determine which broadcasts should receive each incoming message.
+The registry component of the router stores these registrations in memory. At runtime, it performs lookups based on these registrations to determine which broadcasts should receive each incoming message.

@@ -5,7 +5,7 @@ description: "Automatic URL title fetching for posted links"
 draft: false
 ---
 
-The URL Title module automatically fetches and displays titles for URLs posted in chat messages. It listens conversations by providing context about shared links.
+The URL Title module automatically fetches and displays titles for URLs posted in chat messages. It uses broadcast registration to listen to all messages and extracts URLs for title lookup.
 
 ## Features
 
@@ -13,20 +13,28 @@ The URL Title module automatically fetches and displays titles for URLs posted i
 - Title extraction from webpages
 - Support for standard HTML title tags
 - Support for OpenGraph title meta tags as fallback
-- Configurable user agent and timeout settings
-- Automatic handling of redirects
+- YouTube video title and channel extraction via YouTube Data API
+- URL title caching with automatic expiration
+- IRC colorized output
 - Cross-platform compatibility
 
 ## Usage
 
 Simply post any URL in a channel where the bot is active, and it will automatically respond with the page title:
 
-```
+```none
 <User> Check this out: https://example.com/some-page
 <Bot> [Example Domain]
 ```
 
-The module listens to all incoming chat messages and automatically extracts any URLs found in the text. For each URL detected, it fetches the webpage and extracts the title tag, then posts the title back to the channel.
+For YouTube videos, the module displays the video title and channel name:
+
+```none
+<User> https://www.youtube.com/watch?v=dQw4w9WgXcQ
+<Bot> [Rick Astley - Never Gonna Give You Up]
+```
+
+The module listens to all incoming chat messages via broadcast registration and automatically extracts any URLs found in the text.
 
 ## Configuration
 
@@ -43,13 +51,16 @@ botModules:
     metricsPort: 8080
     ipcConfig: my-eevee-bot
     moduleName: urltitle
+    envSecret:
+      name: eevee-bot-urltitle-secrets
     moduleConfig: |
-      #: "Custom Bot Name 1.0"
-      timeout: 5000
+      ratelimit:
+        mode: drop
+        level: user
+        limit: 5
+        interval: 1m
 ```
 
-## Technical Details
+## Environment Variables
 
-- Listens to `chat.message.incoming.>` NATS topic
-- Publishes responses to `chat.message.outgoing.$PLATFORM.$INSTANCE.$CHANNEL`
-- Built with Node.js, TypeScript, axios, and cheerio
+- `YOUTUBE_API_KEY` - YouTube Data API key for enhanced YouTube video information (optional)
