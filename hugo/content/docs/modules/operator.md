@@ -5,7 +5,7 @@ description: "Kubernetes operator for managing eevee resources"
 draft: false
 ---
 
-The Operator module is a Kubernetes operator that manages eevee.bot custom resources. It watches for changes to **BotModule** and **IpcConfig** resources and ensures the appropriate Kubernetes deployments, services, and configurations are running.
+The Operator module is a Kubernetes operator that manages eevee.bot custom resources. It watches for changes to **botmodule** and **ipcconfig** resources and ensures the appropriate Kubernetes deployments, services, and configurations are running.
 
 ## Features
 
@@ -26,7 +26,7 @@ The Operator module is a Kubernetes operator that manages eevee.bot custom resou
 
 The operator manages two custom resource types:
 
-### BotModule (`eevee.bot/v1/botmodules`)
+### BotModule (`eevee.bot/v1/botmodule`)
 
 The BotModule CRD is the universal deployment mechanism for all eevee components. Every module — connectors (IRC, Discord), plugins (echo, calculator, dice, etc.), the router, and the toolbox — is deployed as a BotModule. The operator:
 
@@ -39,7 +39,7 @@ The BotModule CRD is the universal deployment mechanism for all eevee components
 - Supports enabling/disabling modules via `spec.enabled`
 - Handles updates by reconciling the deployment, config, and PVC
 
-### IpcConfig (`eevee.bot/v1/ipcconfigs`)
+### IpcConfig (`eevee.bot/v1/ipcconfig`)
 
 The IpcConfig CRD defines the NATS messaging infrastructure. The operator:
 
@@ -70,7 +70,7 @@ The eevee Operator is installed using Helm:
 ```bash
 helm repo add eevee https://helm.eevee.bot
 helm repo update
-helm install eevee-crds eevee/eevee-crds --namespace eevee-bot
+helm install eevee-crds eevee/crds --namespace eevee-bot
 helm install eevee-operator eevee/operator --namespace eevee-bot
 ```
 

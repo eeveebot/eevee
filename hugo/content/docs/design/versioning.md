@@ -39,7 +39,7 @@ The version manager automatically handles Helm chart updates when relevant packa
 - When any command module (admin, calculator, cli, etc.) is versioned, the bot version in `helm/versions.yaml` is automatically incremented
 - When `operator` or `crds` versions change, the corresponding entries in `helm/versions.yaml` are automatically updated
 
-The Helm repository (separate git repository) is automatically tagged when any of these changes occur, but tags must be pushed manually using `./docs/scripts/vm.sh git-push-tags helm`.
+The Helm repository (separate git repository) is automatically tagged when any of these changes occur. Tags must be pushed manually to the remote.
 
 ## Versioning Strategy
 

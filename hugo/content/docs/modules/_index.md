@@ -13,6 +13,7 @@ independently.
 
 - [router](router/) - Core message router
 - [admin](admin/) - Administration and configuration management
+- [help](help/) - Help documentation and !help command provider
 - [toolbox](toolbox/) - Utility and monitoring tools
 
 ## Chat Connectivity Modules
@@ -20,16 +21,20 @@ independently.
 - [connector-irc](connector-irc/) - IRC connectivity
 - [connector-discord](connector-discord/) - Discord connectivity
 
+## Infrastructure Modules
+
+- [operator](operator/) - Kubernetes operator for managing eevee resources
+- [crds](crds/) - Custom Resource Definitions for the eevee ecosystem
+- [cli](cli/) - Command-line interface for eevee management
+
 ## Utility Modules
 
 - [calculator](calculator/) - Mathematical expression evaluator
-- [cli](cli/) - Command-line interface for eevee management
-- [crds](crds/) - Custom Resource Definitions for the eevee ecosystem
-- [help](help/) - Help documentation and !help command provider
-- [operator](operator/) - Kubernetes operator for managing eevee resources
+- [seen](seen/) - Track when users were last seen in channels
 - [tell](tell/) - Interstellar answering machine for offline messaging
 - [urltitle](urltitle/) - Automatic URL title fetching for posted links
 - [weather](weather/) - Weather information provider
+- [libeevee-js](libeevee-js/) - Shared Node.js library for all eevee modules
 
 ## Fun Modules
 

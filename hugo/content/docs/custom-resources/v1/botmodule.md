@@ -16,6 +16,9 @@ This file defines a Custom Resource for bot modules in the eevee.bot/v1 API. It 
 - Persistent volume configuration
 - Volume mount path
 - Arbitrary module configuration
+- Enable/disable toggle
+- Secret injection for environment variables
+- Operator API token mounting
 
 The botmodule CRD allows you to define and deploy individual bot modules that communicate through the eevee.bot messaging system.
 
@@ -27,6 +30,7 @@ metadata:
   name: my-module
   namespace: my-eevee-bot
 spec:
+  enabled: true
   size: 1
   image: ghcr.io/eeveebot/module:latest
   pullPolicy: Always
@@ -41,6 +45,9 @@ spec:
       requests:
         storage: 1Gi
   volumeMountPath: /data
+  mountOperatorApiToken: false
+  envSecret:
+    name: my-module-secrets
   moduleConfig: |
     # Arbitrary configuration passed to the module
     setting1: value1

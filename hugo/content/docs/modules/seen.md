@@ -87,4 +87,4 @@ botModules:
 
 ## Requirements
 
-This module requires Node.js to be installed for building the native modules.
+This module uses `better-sqlite3` for persistent storage, which requires native compilation during `npm install`. Ensure your build environment has a C++ compiler and Python 3 (for `node-gyp`). Node.js ≥24 is required.

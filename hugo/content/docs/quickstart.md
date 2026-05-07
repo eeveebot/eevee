@@ -28,12 +28,14 @@ helm repo update
 
 Create a `values.yaml` file for your deployment. An example is provided below.
 
+> **Note:** The image tags in the example below are for illustration. Check each module's repository for the latest version before deploying.
+
 Then, you can install eevee with the following commands:
 
 ```bash
 kubectl create ns eevee-bot
 
-helm install eevee-crds eevee/eevee-crds \
+helm install eevee-crds eevee/crds \
   --namespace eevee-bot
 
 helm install eevee eevee/eevee \

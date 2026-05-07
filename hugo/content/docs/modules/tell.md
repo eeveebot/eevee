@@ -84,4 +84,4 @@ botModules:
 
 ## Requirements
 
-This module requires Python 3.x to be installed for building the `better-sqlite3` native module.
+This module uses `better-sqlite3` for persistent storage, which requires native compilation during `npm install`. Ensure your build environment has a C++ compiler and Python 3 (for `node-gyp`).

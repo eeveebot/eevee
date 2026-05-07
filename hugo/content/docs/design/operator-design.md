@@ -1,6 +1,6 @@
 ---
 weight: 310
-title: "Overview: eevee-operator"
+title: "eevee-operator"
 description: "Why the hell did you write an operator"
 draft: false
 toc: true
@@ -64,8 +64,8 @@ The eevee Operator incorporates mechanisms to ensure fault tolerance and facilit
 
 The architecture of the eevee Operator is designed to be fairly standard, following the typical Kubernetes Operator patterns.
 
-- **Controller**: The primary component responsible for reconciling the desired state of the eevee bot as defined by the CRDs with the actual state in the Kubernetes cluster.
-- **CRDs**: Two custom resource definitions — `BotModule` and `IpcConfig` — that serve as configuration templates for the eevee bot.
+- **Controller**: The primary component responsible for reconciling the desired state of eevee as defined by the CRDs with the actual state in the Kubernetes cluster.
+- **CRDs**: Two custom resource definitions — `BotModule` and `IpcConfig` — that serve as configuration templates for eevee.
 - **API Server**: The central Kubernetes API server that interacts with the operator to send requests and receive responses.
 - **Etcd**: The distributed key-value store used by Kubernetes to store the state of the cluster, including the CRDs managed by the eevee Operator.
 
@@ -73,7 +73,7 @@ The architecture of the eevee Operator is designed to be fairly standard, follow
 
 To deploy and configure the eevee chat utility bot using the eevee Kubernetes Operator, follow these steps:
 
-1. **Install the CRDs**: Deploy the CRD definitions within the Kubernetes cluster using the eevee-crds Helm chart.
+1. **Install the CRDs**: Deploy the CRD definitions within the Kubernetes cluster using the `crds` Helm chart.
 2. **Install the Operator**: Deploy the operator within the Kubernetes cluster using the eevee-operator Helm chart.
 3. **Create IpcConfig**: Define an IpcConfig resource to set up NATS messaging infrastructure.
 4. **Create BotModules**: Define BotModule resources for each eevee component (connectors, plugins, router, toolbox).
