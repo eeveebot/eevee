@@ -14,7 +14,7 @@ and consists of independent modules that communicate through a common message bu
 | [**Homepage**](https://eevee.bot/) | --- |
 | [**Documentation**](https://eevee.bot/docs) | --- |
 | [**Helm Repo**](https://helm.eevee.bot) | --- |
-| [**Issues**](https://github.com/eeveebot/eevee/issues) | --- |
+| [**Issues**](https://github.com/eeveebot/eevee/issues) | [![Issues](https://img.shields.io/github/issues/eeveebot/eevee)](https://github.com/eeveebot/eevee/issues) |
 | [**.GitHub**](https://github.com/eeveebot/.github) | --- |
 | [**Admin**](https://github.com/eeveebot/admin) | [![Build](https://github.com/eeveebot/admin/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/admin/actions/workflows/build-image.yml) |
 | [**Calculator**](https://github.com/eeveebot/calculator) | [![Build](https://github.com/eeveebot/calculator/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/calculator/actions/workflows/build-image.yml) |
