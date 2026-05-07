@@ -9,116 +9,524 @@ draft: false
 
 ## Installation
 
+### npmrc config
+
+```ini
+@eeveebot:registry=https://npm.pkg.github.com/
+@thehonker:registry=https://npm.pkg.github.com/
+```
+
+### install
+
 ```bash
 npm install @eeveebot/libeevee
 ```
 
-## Exports
+Published to the eeveebot GitHub Packages registry.
 
-### NatsClient
+## Quick Start
 
-The NATS client wrapper that all modules use to connect to the NATS server. Handles connection, reconnection, and subscription management.
+A minimal module using libeevee looks like this:
 
-```typescript
-import { NatsClient } from '@eeveebot/libeevee';
+```ts
+import {
+  createNatsConnection,
+  registerGracefulShutdown,
+  createModuleMetrics,
+  loadModuleConfig,
+  RateLimitConfig,
+  defaultRateLimit,
+  initializeSystemMetrics,
+  setupHttpServer,
+  registerCommand,
+  sendChatMessage,
+  registerHelp,
+  registerStatsHandlers,
+  HelpEntry,
+} from '@eeveebot/libeevee';
 
-const nats = new NatsClient();
-await nats.connect('nats://localhost:4222', 'my-token');
-await nats.subscribe('chat.message.incoming.>', (msg) => { ... });
-await nats.publish('command.register', JSON.stringify(payload));
-```
+// Config
+interface MyConfig { ratelimit?: RateLimitConfig }
+const config = loadModuleConfig<MyConfig>({});
 
-### log
+// Bootstrap
+const natsClients = [];
+registerGracefulShutdown(natsClients);
+const nats = await createNatsConnection();
+natsClients.push(nats);
 
-Structured logger with log levels (info, warn, error, debug).
+// Metrics & HTTP
+const metrics = createModuleMetrics('mymod');
+initializeSystemMetrics('mymod');
+setupHttpServer({ port: process.env.HTTP_API_PORT || '9000', serviceName: 'mymod' });
+const moduleStartTime = Date.now();
 
-```typescript
-import { log } from '@eeveebot/libeevee';
+// Register a command
+const subs = await registerCommand(nats, {
+  commandUUID: '...',
+  commandDisplayName: 'mymod',
+  regex: '^mymod\\s+',
+  ratelimit: config.ratelimit || defaultRateLimit,
+}, metrics);
 
-log.info('Module started', { producer: 'my-module' });
-log.error('Something went wrong', { error: err.message });
-```
-
-### handleSIG
-
-Signal handler for graceful shutdown on SIGINT/SIGTERM.
-
-```typescript
-import { handleSIG } from '@eeveebot/libeevee';
-
-process.on('SIGINT', async () => {
-  // your cleanup
-  await handleSIG('SIGINT');
+// Handle command execution
+nats.subscribe('command.execute.<uuid>', (subject, message) => {
+  const data = JSON.parse(message.string());
+  sendChatMessage(nats, {
+    channel: data.channel,
+    network: data.network,
+    instance: data.instance,
+    platform: data.platform,
+    text: `You said: ${data.text}`,
+    trace: data.trace,
+  }, metrics);
 });
+
+// Help & stats
+const helpSubs = await registerHelp(nats, 'mymod', [
+  { command: 'mymod', descr: 'Does the thing', params: [{ param: 'text', required: true, descr: 'Text to echo' }] },
+], metrics);
+
+const statsSubs = registerStatsHandlers({ nats, moduleName: 'mymod', startTime: moduleStartTime, metrics });
 ```
 
-### eeveeLogo
+---
 
-The eevee.bot ASCII art logo, printed on module startup.
+## API Reference
 
-```typescript
-import { eeveeLogo } from '@eeveebot/libeevee';
-console.log(eeveeLogo);
+### Core Bootstrap
+
+#### `createNatsConnection(options?)`
+
+Reads `NATS_HOST` and `NATS_TOKEN` from environment, validates them, creates a `NatsClient`, and connects. Throws with a clear message on missing vars.
+
+```ts
+const nats = await createNatsConnection();
+// With custom env var names:
+const nats = await createNatsConnection({ hostEnvVar: 'MY_NATS_HOST', tokenEnvVar: 'MY_NATS_TOKEN' });
 ```
+
+**Returns:** Connected `NatsClient` instance.
+
+#### `registerGracefulShutdown(natsClients, cleanup?)`
+
+Registers SIGINT/SIGTERM handlers that drain all NATS clients, run optional cleanup, then delegate to `handleSIG()` for double-signal force-exit.
+
+```ts
+const natsClients = [];
+registerGracefulShutdown(natsClients);
+// With DB cleanup:
+registerGracefulShutdown(natsClients, async () => { if (db) db.close(); });
+```
+
+#### `loadModuleConfig<T>(defaults)`
+
+Reads `MODULE_CONFIG_PATH` from env, parses the YAML file, returns the result. Falls back to `defaults` on missing path or parse errors.
+
+```ts
+interface MyConfig { ratelimit?: RateLimitConfig; maxRetries?: number }
+const config = loadModuleConfig<MyConfig>({ maxRetries: 3 });
+```
+
+#### `setupHttpServer(options)`
+
+Sets up an Express server for Prometheus metrics scraping and health checks.
+
+```ts
+setupHttpServer({ port: '9000', serviceName: 'mymod' });
+```
+
+#### `initializeSystemMetrics(moduleName)`
+
+Initializes the standard system metrics (uptime gauge, memory usage gauge) for the given module. Call once at startup.
+
+---
 
 ### Metrics
 
-Prometheus-compatible metrics via `prom-client`:
+#### `createModuleMetrics(moduleName)`
 
-| Export | Type | Description |
-|--------|------|-------------|
-| `Counter` | Class | Prometheus counter |
-| `Gauge` | Class | Prometheus gauge |
-| `Histogram` | Class | Prometheus histogram |
-| `uptimeGauge` | Gauge | Module uptime in seconds |
-| `memoryUsageGauge` | Gauge | Process memory usage |
-| `natsPublishCounter` | Counter | NATS publish operations |
-| `natsSubscribeCounter` | Counter | NATS subscribe operations |
-| `errorCounter` | Counter | Error count |
-| `httpRequestCounter` | Counter | HTTP request count |
-| `httpRequestDuration` | Histogram | HTTP request duration |
-| `messageCounter` | Counter | Messages processed |
-| `messageProcessingTime` | Histogram | Message processing duration |
-| `connectionCounter` | Counter | Connection events |
-| `connectionGauge` | Gauge | Active connections |
-| `channelCounter` | Counter | Channel events |
-| `channelGauge` | Gauge | Active channels |
-| `commandCounter` | Counter | Commands processed |
-| `commandProcessingTime` | Histogram | Command processing duration |
-| `commandErrorCounter` | Counter | Command errors |
-| `register` | Registry | Prometheus metric registry |
-| `initializeSystemMetrics` | Function | Sets up uptime and memory gauges for a named service |
-| `setupHttpServer` | Function | Starts HTTP server for Prometheus scraping |
-| `recordMessage` | Function | Record a message event |
-| `recordConnection` | Function | Record a connection event |
-| `recordChannel` | Function | Record a channel event |
-| `recordCommand` | Function | Record a command event |
-| `recordCommandError` | Function | Record a command error |
+Factory that returns a `ModuleMetrics` object with pre-bound methods. Eliminates the need for per-module `lib/metrics.mts` files.
 
-### ircColors
-
-Passthrough export of the `irc-colors` package for IRC-formatted colored text.
-
-```typescript
-import { ircColors } from '@eeveebot/libeevee';
-const colored = ircColors.green('Hello');
+```ts
+const metrics = createModuleMetrics('dice');
+metrics.recordCommand(platform, network, channel, 'success');
+metrics.recordError('parse_error');
+metrics.recordProcessingTime(0.025);
+metrics.recordNatsPublish('command.register');
+metrics.recordNatsSubscribe(subject);
 ```
 
-## Usage in Modules
+**ModuleMetrics methods:**
 
-A typical module setup looks like:
+| Method | Description |
+|---|---|
+| `recordCommand(platform, network, channel, result)` | Increment command counter |
+| `recordError(errorType)` | Increment error counter |
+| `recordProcessingTime(seconds)` | Observe command processing time |
+| `recordNatsPublish(messageType)` | Increment NATS publish counter |
+| `recordNatsSubscribe(subject)` | Increment NATS subscribe counter |
 
-```typescript
-import { NatsClient, log, handleSIG, eeveeLogo } from '@eeveebot/libeevee';
-import { initializeSystemMetrics, setupHttpServer } from '@eeveebot/libeevee';
+#### Low-level Metrics
 
-console.log(eeveeLogo);
-initializeSystemMetrics('my-module');
-setupHttpServer({ port: process.env.HTTP_API_PORT || '9000', serviceName: 'my-module' });
+Direct access to shared Prometheus primitives — use these when `createModuleMetrics` isn't enough:
 
-const nats = new NatsClient();
-// ... module logic
+- `Counter`, `Gauge`, `Histogram` — prom-client constructors
+- `register` — shared Prometheus registry
+- `commandCounter`, `commandProcessingTime`, `commandErrorCounter` — pre-defined instruments
+- `natsPublishCounter`, `natsSubscribeCounter` — NATS operation tracking
+- `messageCounter`, `messageProcessingTime` — message-level metrics
+- `connectionCounter`, `connectionGauge`, `channelCounter`, `channelGauge` — connector metrics
+- `uptimeGauge`, `memoryUsageGauge` — system metrics
+- `errorCounter`, `httpRequestCounter`, `httpRequestDuration` — infra metrics
+- `recordMessage()`, `recordConnection()`, `recordChannel()`, `recordCommand()`, `recordCommandError()` — convenience wrappers
+
+---
+
+### Command & Message Helpers
+
+#### `registerCommand(nats, options, metrics?, autoControlSub?)`
+
+Registers a command with the router by publishing to `command.register`. By default, also subscribes to `control.registerCommands` and `control.registerCommands.<displayName>` for automatic re-registration.
+
+```ts
+const subs = await registerCommand(nats, {
+  commandUUID: '9e5c1e0c-...',
+  commandDisplayName: 'echo',
+  regex: '^echo\\s+',
+  platformPrefixAllowed: true,
+  ratelimit: { mode: 'drop', level: 'user', limit: 5, interval: '1m' },
+  // Optional overrides (default: '.*' for all)
+  platform: 'irc',
+  network: 'libera',
+}, metrics);
 ```
+
+**CommandRegistrationOptions:**
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `commandUUID` | `string` | — | Unique command identifier |
+| `commandDisplayName` | `string` | — | Human-readable name (also used for control re-sub) |
+| `regex` | `string` | — | Trigger regex |
+| `platformPrefixAllowed` | `boolean` | — | Allow platform prefix before command |
+| `ratelimit` | `RateLimitConfig` | — | Rate limiting config |
+| `platform` | `string` | `'.*'` | Platform filter |
+| `network` | `string` | `'.*'` | Network filter |
+| `instance` | `string` | `'.*'` | Instance filter |
+| `channel` | `string` | `'.*'` | Channel filter |
+| `user` | `string` | `'.*'` | User filter |
+
+**Returns:** Array of subscription promises (for the control re-registration subs).
+
+#### `sendChatMessage(nats, message, metrics?, type?)`
+
+Constructs the standard outgoing message envelope and publishes to `chat.message.outgoing.<platform>.<instance>.<channel>`.
+
+```ts
+sendChatMessage(nats, {
+  channel, network, instance, platform,
+  text: 'Hello!',
+  trace: data.trace,
+}, metrics);
+```
+
+**ChatMessage fields:** `channel`, `network`, `instance`, `platform`, `text`, `trace`.
+
+#### `sendAction(nats, message, metrics?)`
+
+Same as `sendChatMessage` but with `type: 'action.outgoing'` for IRC actions (`/me`).
+
+#### `registerHelp(nats, moduleName, helpData, metrics?)`
+
+Publishes help data to `help.update` immediately, then subscribes to `help.updateRequest` and `help.updateRequest.<moduleName>` to re-publish when requested.
+
+```ts
+const helpSubs = await registerHelp(nats, 'dice', [
+  {
+    command: 'roll',
+    descr: 'Roll dice like a D&D nerd',
+    params: [{ param: 'dicenotation', required: true, descr: 'XdY+Z or XdF or 4d6k3' }],
+    aliases: ['r'],
+  },
+], metrics);
+```
+
+**HelpEntry:** `{ command, descr, params: Array<{ param, required, descr }>, aliases? }`
+
+---
+
+### Stats & RPC
+
+#### `registerStatsHandlers(options)`
+
+Subscribes to `stats.uptime` and `stats.emit.request` and responds with module uptime, memory usage, and Prometheus metrics. Returns subscription objects.
+
+```ts
+const statsSubs = registerStatsHandlers({
+  nats,
+  moduleName: 'dice',
+  startTime: moduleStartTime,
+  metrics,
+  // Optional: custom Prometheus register (defaults to libeevee's shared register)
+  // prometheusRegister: customRegister,
+});
+```
+
+**StatsHandlersOptions:**
+
+| Field | Type | Description |
+|---|---|---|
+| `nats` | `NatsClient` | Connected NATS client |
+| `moduleName` | `string` | Module name for responses |
+| `startTime` | `number` | `Date.now()` captured at startup |
+| `metrics` | `ModuleMetrics?` | For recording pub/sub metrics |
+| `prometheusRegister` | `any?` | Custom prom-client register |
+
+#### `queryChannelUsers(nats, platform, instance, channel, options?)`
+
+Queries the IRC connector for the user list in a channel via NATS RPC. Sends a `list-users-in-channel` control command and waits for a reply on a unique channel (5s timeout).
+
+```ts
+const users = await queryChannelUsers(nats, 'irc', 'libera', '#eevee', {
+  metrics,
+  producer: 'seen',       // for log messages
+  timeoutMs: 5000,        // default: 5000
+});
+// users: Array<ChannelUser> — each user includes isChannelAdmin boolean
+```
+
+#### `queryUserModes(nats, platform, instance, channel, nick, options?)`
+
+Queries the IRC connector for a specific user's channel modes via NATS RPC. Sends a `get-modes-for-user` control command and waits for a reply on a unique channel (5s timeout). The server is polled fresh every time (no caching).
+
+```ts
+const result = await queryUserModes(nats, 'irc', 'libera', '#eevee', 'alice', {
+  metrics,
+  producer: 'seen',       // for log messages
+  timeoutMs: 5000,        // default: 5000
+});
+// result: UserModes — { channel, nick, modes, isChannelAdmin }
+```
+
+---
+
+### Colorization
+
+Platform-aware IRC color helpers. All functions are no-ops on non-IRC platforms — they return the original text unchanged.
+
+#### `colorizeForPlatform(text, platform, color)`
+
+Apply a named IRC foreground color to text. Supports all 26 `irc-colors` foreground colors.
+
+```ts
+colorizeForPlatform('hello', 'irc', 'cyan');   // → colored on IRC
+colorizeForPlatform('hello', 'discord', 'cyan'); // → 'hello' unchanged
+```
+
+**IrcColorName values:** `white`, `black`, `navy`, `green`, `red`, `brown`, `maroon`, `purple`, `violet`, `olive`, `yellow`, `lightgreen`, `lime`, `teal`, `bluecyan`, `cyan`, `aqua`, `blue`, `royal`, `pink`, `lightpurple`, `fuchsia`, `gray`, `grey`, `lightgray`, `lightgrey`, `silver`
+
+#### `colorizeBgForPlatform(text, platform, color)`
+
+Apply a named IRC background color. Same naming convention with `bg` prefix: `bgwhite`, `bgblack`, `bgnavy`, etc.
+
+#### `styleForPlatform(text, platform, style)`
+
+Apply an IRC text style. **IrcStyleName values:** `normal`, `underline`, `bold`, `italic`, `inverse`, `strikethrough`, `monospace`
+
+```ts
+styleForPlatform('important', 'irc', 'bold');
+```
+
+#### `colorizeByType(text, platform, type, colorMap?)`
+
+Semantic color mapping — pick a color by meaning rather than name. Uses a default map, overrideable per module.
+
+```ts
+colorizeByType('goos', 'irc', 'user'); // → cyan
+colorizeByType('2d 3h ago', 'irc', 'date'); // → green
+
+// Custom map:
+const myMap = { user: 'pink', date: 'yellow', warning: 'red' };
+colorizeByType(text, platform, 'user', myMap);
+```
+
+**Default semantic map:**
+
+| Type | Color |
+|---|---|
+| `user` | cyan |
+| `date` | green |
+| `action` | yellow |
+| `warning` | olive |
+| `info` | blue |
+| `title` | cyan |
+| `error` | red |
+| `success` | green |
+| `highlight` | yellow |
+| `muted` | gray |
+
+#### `colorizeByValue(text, platform, value, definition)`
+
+Pick a color based on a numeric value and range thresholds. Perfect for temperature, wind speed, humidity, etc.
+
+```ts
+colorizeByValue('72°F', 'irc', 72, {
+  ranges: [
+    { max: 32, color: 'blue' },
+    { max: 50, color: 'cyan' },
+    { max: 70, color: 'green' },
+    { max: 80, color: 'yellow' },
+    { max: 90, color: 'olive' },
+  ],
+  fallback: 'red',
+});
+// → yellow (72 is between 70 and 80)
+```
+
+#### `randomColorForPlatform(text, platform)`
+
+Pick a random foreground color and apply it. Used by the emote module.
+
+#### `rainbowForPlatform(text, platform, colorArr?)`
+
+Apply rainbow colorization using `irc-colors.rainbow()`. Optionally provide a custom color array.
+
+#### Strip Functions
+
+- `stripColors(text)` — Remove IRC color codes
+- `stripStyle(text)` — Remove IRC style codes
+- `stripColorsAndStyle(text)` — Remove both
+
+#### Direct Color Maps
+
+If you need raw access to validated color functions:
+
+```ts
+import { fgColors, bgColors, styles } from '@eeveebot/libeevee';
+
+fgColors.cyan('hello');  // same as colorizeForPlatform but without the platform check
+bgColors.bgcyan('hello');
+styles.bold('hello');
+```
+
+---
+
+### Types
+
+#### `RateLimitConfig`
+
+```ts
+interface RateLimitConfig {
+  mode: 'enqueue' | 'drop';
+  level: 'channel' | 'user' | 'global';
+  limit: number;
+  interval: string; // e.g. "30s", "1m", "5m"
+}
+```
+
+Also exported as `defaultRateLimit` — `{ mode: 'drop', level: 'user', limit: 5, interval: '1m' }`.
+
+#### `ChatMessage`
+
+```ts
+interface ChatMessage {
+  channel: string;
+  network: string;
+  instance: string;
+  platform: string;
+  text: string;
+  trace: string;
+}
+```
+
+#### `HelpEntry`
+
+```ts
+interface HelpEntry {
+  command: string;
+  descr: string;
+  params: Array<{ param: string; required: boolean; descr: string }>;
+  aliases?: string[];
+}
+```
+
+#### `ChannelUser`
+
+```ts
+interface ChannelUser {
+  nick: string;
+  ident: string;
+  hostname: string;
+  modes: string[];
+  isChannelAdmin: boolean;
+}
+```
+
+`isChannelAdmin` is `true` if the user has channel mode `+h` (halfop), `+o` (op), `+a` (admin/protect), or `+q` (owner).
+
+#### `UserModes`
+
+```ts
+interface UserModes {
+  channel: string;
+  nick: string;
+  modes: string[];
+  isChannelAdmin: boolean;
+}
+```
+
+`isChannelAdmin` is `true` if the user has channel mode `+h` (halfop), `+o` (op), `+a` (admin/protect), or `+q` (owner).
+
+#### `SemanticColorMap`
+
+```ts
+interface SemanticColorMap {
+  user?: IrcColorName;
+  date?: IrcColorName;
+  action?: IrcColorName;
+  warning?: IrcColorName;
+  info?: IrcColorName;
+  title?: IrcColorName;
+  error?: IrcColorName;
+  success?: IrcColorName;
+  highlight?: IrcColorName;
+  muted?: IrcColorName;
+  [key: string]: IrcColorName | undefined; // extensible
+}
+```
+
+#### `ValueColorRange`
+
+```ts
+interface ValueColorRange {
+  lt?: { threshold: number; color: IrcColorName };
+  ranges?: Array<{ max: number; color: IrcColorName }>;
+  fallback: IrcColorName;
+}
+```
+
+---
+
+### Passthrough Exports
+
+These are re-exported from their original libraries for convenience:
+
+- `ircColors` — full `irc-colors` API (foreground/background colors, styles, rainbow, strip)
+- `log` — Winston logger instance
+- `NatsClient` — NATS client class
+- `handleSIG` — Double-SIGINT force-exit handler
+
+---
+
+## Environment Variables
+
+| Variable | Used By | Description |
+|---|---|---|
+| `NATS_HOST` | `createNatsConnection()` | NATS server hostname |
+| `NATS_TOKEN` | `createNatsConnection()` | NATS auth token |
+| `MODULE_CONFIG_PATH` | `loadModuleConfig()` | Path to YAML config file |
+| `HTTP_API_PORT` | `setupHttpServer()` | Port for metrics/health HTTP server |
 
 ## Source
 
