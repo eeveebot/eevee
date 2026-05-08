@@ -49,6 +49,26 @@ The IpcConfig CRD defines the NATS messaging infrastructure. The operator:
 - Creates a `Secret` with the NATS server configuration file (`nats.conf`)
 - Supports custom NATS container images via `spec.nats.managed.image`
 
+## Health Probes
+
+The operator automatically sets default health probes on module pods to ensure Kubernetes can detect and recover from unhealthy states:
+
+| Probe | Type | Target | `initialDelaySeconds` | `periodSeconds` |
+|-------|------|--------|----------------------|------------------|
+| Liveness | HTTP GET | `/health` on `metricsPort` | 10 | 30 |
+| Readiness | HTTP GET | `/health` on `metricsPort` | 5 | 10 |
+| Startup | — | *(none — modules start fast)* | — | — |
+
+The `/health` endpoint checks NATS connectivity. A pod that loses its NATS connection returns 503 and will be marked not ready by the readiness probe. If it stays unhealthy, the liveness probe will trigger a restart.
+
+### Custom Probes
+
+You can override the default probes by setting `livenessProbe`, `readinessProbe`, or `startupProbe` in the BotModule spec. These accept standard Kubernetes `V1Probe` objects (httpGet, tcpSocket, exec, etc.). When a custom probe is specified, it replaces the default entirely.
+
+### Disabling Probes
+
+If a module has `metrics: false` in its BotModule spec, no default probes are set. This is because the `/health` endpoint is served on the metrics port, which is not exposed when metrics are disabled.
+
 ## HTTP API
 
 The operator exposes an HTTP API server (default port 9000) with the following endpoints:

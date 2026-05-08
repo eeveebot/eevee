@@ -104,3 +104,12 @@ Default: true
 
 #### `envSecret` (object)
 EnvSecret defines optional secrets to be injected as environment variables
+
+#### `livenessProbe` (object, optional)
+LivenessProbe defines a custom liveness probe for the module pod. Accepts a standard Kubernetes `V1Probe` object (httpGet, tcpSocket, exec, etc.). If not specified, the operator provides a default HTTP GET probe against `/health` on the module's metricsPort.
+
+#### `readinessProbe` (object, optional)
+ReadinessProbe defines a custom readiness probe for the module pod. Accepts a standard Kubernetes `V1Probe` object. If not specified, the operator provides a default HTTP GET probe against `/health` on the module's metricsPort.
+
+#### `startupProbe` (object, optional)
+StartupProbe defines a custom startup probe for the module pod. Accepts a standard Kubernetes `V1Probe` object. If not specified, no startup probe is set (modules typically start quickly).

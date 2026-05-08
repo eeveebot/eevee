@@ -36,19 +36,31 @@ The module is "ready" once it has connected to NATS and registered its commands.
 
 | Path | Description |
 |------|-------------|
-| `GET /health` | Returns `{ status: "ok", timestamp, service }` — always 200 |
+| `GET /health` | Returns `{ status: "ok", timestamp, service }` — 200 if all NATS clients are connected, 503 if any are disconnected |
 | `GET /metrics` | Prometheus metrics in standard format |
+
+When `natsClients` is passed to `setupHttpServer()`, the `/health` endpoint checks each client's connectivity via `NatsClient.isClosed()`. If any client is disconnected, the endpoint returns HTTP 503. If `natsClients` is not provided, `/health` always returns 200.
 
 The port is set via the `HTTP_API_PORT` environment variable (default `9000`).
 
 ### Kubernetes Probes
 
-The operator **does not** set `readinessProbe`, `livenessProbe`, or `startupProbe` on module containers. Kubernetes considers the pod ready as soon as the container process starts.
+The operator sets default liveness and readiness probes on module pods:
+
+| Probe | Type | Target | `initialDelaySeconds` | `periodSeconds` |
+|-------|------|--------|----------------------|------------------|
+| Liveness | HTTP GET | `/health` on `metricsPort` | 10 | 30 |
+| Readiness | HTTP GET | `/health` on `metricsPort` | 5 | 10 |
+| Startup | — | *(none)* | — | — |
 
 This means:
-- If a module's NATS connection drops, Kubernetes won't restart it
-- If the HTTP server crashes, Kubernetes won't notice
-- The `/health` endpoint is available for external monitoring but is not wired to probes
+- If a module's NATS connection drops, the readiness probe will fail (503 from `/health`) and the pod will be removed from service endpoints
+- If the module stays unhealthy, the liveness probe will eventually restart the pod
+- If the HTTP server crashes, Kubernetes will detect it and restart the pod
+
+Custom probes can be set via `livenessProbe`, `readinessProbe`, and `startupProbe` fields on the BotModule spec. These accept standard Kubernetes `V1Probe` objects and override the defaults entirely.
+
+If a module has `metrics: false`, no default probes are set (the `/health` endpoint is served on the metrics port, which is not exposed when metrics are disabled).
 
 ### Environment Variables
 
