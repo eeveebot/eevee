@@ -71,6 +71,7 @@ import {
   handleSIG,
   registerGracefulShutdown,
   registerCommand,
+  registerBroadcast,
   registerHelp,
   registerStatsHandlers,
   loadModuleConfig,
@@ -218,28 +219,35 @@ If your command takes parameters:
 Broadcasts let your module observe all messages matching a pattern. This is useful for modules that need to react to messages regardless of whether they're commands (e.g., `seen` tracking, `urltitle` link detection):
 
 ```typescript
-const SEEN_BROADCAST_UUID = 'your-broadcast-uuid-here';
+const OBSERVER_BROADCAST_UUID = 'your-broadcast-uuid-here';
 
-const broadcastRegistration = {
-  type: 'broadcast.register',
-  broadcastUUID: SEEN_BROADCAST_UUID,
-  broadcastDisplayName: 'ping-observer',
-  platform: '.*',
-  network: '.*',
-  instance: '.*',
-  channel: '.*',
-  user: '.*',
-  nick: '.*',
-  messageFilterRegex: '.*',
-};
-
-await nats.publish('broadcast.register', JSON.stringify(broadcastRegistration));
-metrics.recordNatsPublish('broadcast_register');
+const broadcastSubs = await registerBroadcast(
+  nats,
+  {
+    broadcastUUID: OBSERVER_BROADCAST_UUID,
+    broadcastDisplayName: 'ping-observer',
+  },
+  metrics
+);
 ```
 
 Then subscribe to `broadcast.message.<uuid>` to receive matching messages. The payload format is the same as command execution.
 
-> **Note:** There is no `registerBroadcast()` helper in libeevee-js yet. Modules construct and publish the registration manually, and subscribe to `control.registerBroadcasts.<displayName>` for re-registration requests.
+By default, all regex filters (`platform`, `network`, `instance`, `channel`, `user`, `nick`) match `.*` (everything). To filter, pass the ones you need:
+
+```typescript
+const broadcastSubs = await registerBroadcast(
+  nats,
+  {
+    broadcastUUID: URLTITLE_BROADCAST_UUID,
+    broadcastDisplayName: 'urltitle',
+    messageFilterRegex: 'https?://',  // Only messages containing URLs
+  },
+  metrics
+);
+```
+
+The helper also subscribes to `control.registerBroadcasts` and `control.registerBroadcasts.<displayName>` for automatic re-registration.
 
 ## Registering Stats Handlers
 
@@ -303,6 +311,7 @@ import {
   eeveeLogo,
   registerGracefulShutdown,
   registerCommand,
+  registerBroadcast,
   registerHelp,
   registerStatsHandlers,
   loadModuleConfig,

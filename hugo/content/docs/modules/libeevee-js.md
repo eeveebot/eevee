@@ -40,6 +40,7 @@ import {
   setupHttpServer,
   registerCommand,
   sendChatMessage,
+  registerBroadcast,
   registerHelp,
   registerStatsHandlers,
   HelpEntry,
@@ -275,6 +276,43 @@ const helpSubs = await registerHelp(nats, 'dice', [
 
 **HelpEntry:** `{ command, descr, params: Array<{ param, required, descr }>, aliases? }`
 
+#### `registerBroadcast(nats, options, metrics?, autoControlSub?)`
+
+Registers a broadcast with the router by publishing to `broadcast.register`. By default, also subscribes to `control.registerBroadcasts` and `control.registerBroadcasts.<displayName>` for automatic re-registration.
+
+```ts
+const broadcastSubs = await registerBroadcast(nats, {
+  broadcastUUID: 'c3d4e5f6-...',
+  broadcastDisplayName: 'seen',
+}, metrics);
+```
+
+With a message filter (e.g., urltitle only wants messages with URLs):
+
+```ts
+const broadcastSubs = await registerBroadcast(nats, {
+  broadcastUUID: 'd4e5f6a7-...',
+  broadcastDisplayName: 'urltitle',
+  messageFilterRegex: 'https?://',
+}, metrics);
+```
+
+**BroadcastRegistrationOptions:**
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `broadcastUUID` | `string` | — | Unique broadcast identifier |
+| `broadcastDisplayName` | `string` | — | Human-readable name (used for control re-sub) |
+| `platform` | `string` | `'.*'` | Platform filter |
+| `network` | `string` | `'.*'` | Network filter |
+| `instance` | `string` | `'.*'` | Instance filter |
+| `channel` | `string` | `'.*'` | Channel filter |
+| `user` | `string` | `'.*'` | User filter |
+| `nick` | `string` | `'.*'` | Nick filter |
+| `messageFilterRegex` | `string` | `'.*'` | Message text filter |
+
+**Returns:** Array of subscription promises (for the control re-registration subs).
+
 ---
 
 ### Stats & RPC
@@ -498,6 +536,22 @@ interface UserModes {
 ```
 
 `isChannelAdmin` is `true` if the user has channel mode `+h` (halfop), `+o` (op), `+a` (admin/protect), or `+q` (owner).
+
+#### `BroadcastRegistrationOptions`
+
+```ts
+interface BroadcastRegistrationOptions {
+  broadcastUUID: string;
+  broadcastDisplayName: string;
+  platform?: string;          // default '.*'
+  network?: string;           // default '.*'
+  instance?: string;          // default '.*'
+  channel?: string;           // default '.*'
+  user?: string;              // default '.*'
+  nick?: string;              // default '.*'
+  messageFilterRegex?: string; // default '.*'
+}
+```
 
 #### `SemanticColorMap`
 
