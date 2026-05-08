@@ -538,3 +538,7 @@ The deployment includes:
 All eevee components are covered under `Attribution-NonCommercial-ShareAlike 4.0 International`
 
 See [LICENSE](https://github.com/eeveebot/eevee/blob/main/LICENSE) for details.
+
+---
+
+**Next steps:** See [Writing a Module](/docs/guides/writing-a-module/) to build your own module, or [Module Lifecycle](/docs/specification/module-lifecycle/) to understand how modules run in Kubernetes.

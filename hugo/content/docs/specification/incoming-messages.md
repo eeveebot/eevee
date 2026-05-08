@@ -136,3 +136,7 @@ A module may register `.*` with no `prefix` specified to listen to all messages 
 Additionally, modules can register for broadcast messages to receive copies of all messages that match their broadcast registration criteria, enabling features like logging or analytics.
 
 These flexible registration options allow eevee.bot modules to implement a wide variety of functionality, from simple command responders to sophisticated monitoring and analysis tools.
+
+---
+
+**Related:** See [Module Lifecycle](/docs/specification/module-lifecycle/) for how modules start up and shut down, and [Writing a Module](/docs/guides/writing-a-module/) for a step-by-step guide to building a new module.

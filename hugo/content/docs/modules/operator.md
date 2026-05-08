@@ -87,3 +87,7 @@ The operator can be configured using environment variables:
 | `EEVEE_OPERATOR_API_TOKEN` | *(none)* | API token for authenticated endpoints |
 
 Helm values can also be used for configuration. See the chart documentation at [helm.eevee.bot](https://helm.eevee.bot/) for available options.
+
+---
+
+**Related:** See [Module Lifecycle](/docs/specification/module-lifecycle/) for how the operator manages module startup, health, updates, and shutdown.

@@ -599,3 +599,7 @@ These are re-exported from their original libraries for convenience:
 ## Source
 
 The source code lives at [`github.com/eeveebot/libeevee-js`](https://github.com/eeveebot/libeevee-js).
+
+---
+
+**Related:** See [Writing a Module](/docs/guides/writing-a-module/) for a full tutorial on using these APIs, and [Module Lifecycle](/docs/specification/module-lifecycle/) for health checks and shutdown behavior.
