@@ -67,7 +67,7 @@ You can override the default probes by setting `livenessProbe`, `readinessProbe`
 
 ### Disabling Probes
 
-If a module has `metrics: false` in its BotModule spec, no default probes are set. This is because the `/health` endpoint is served on the metrics port, which is not exposed when metrics are disabled.
+If a module has `metrics: false` in its BotModule spec, no default probes are set. The operator sets `HTTP_API_PORT` to match `metricsPort`, so the `/health` and `/metrics` endpoints are served on the same port. When metrics are disabled, the HTTP server is not expected to be running.
 
 ## HTTP API
 

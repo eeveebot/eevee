@@ -60,7 +60,7 @@ This means:
 
 Custom probes can be set via `livenessProbe`, `readinessProbe`, and `startupProbe` fields on the BotModule spec. These accept standard Kubernetes `V1Probe` objects and override the defaults entirely.
 
-If a module has `metrics: false`, no default probes are set (the `/health` endpoint is served on the metrics port, which is not exposed when metrics are disabled).
+If a module has `metrics: false`, no default probes are set. The operator sets `HTTP_API_PORT` to match `metricsPort`, so the `/health` and `/metrics` endpoints are served on the same port. When metrics are disabled, the HTTP server is not expected to be running.
 
 ### Environment Variables
 

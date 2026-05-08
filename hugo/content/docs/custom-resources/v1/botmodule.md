@@ -35,7 +35,7 @@ spec:
   image: ghcr.io/eeveebot/module:latest
   pullPolicy: Always
   metrics: false
-  metricsPort: 8080
+  metricsPort: 9000
   ipcConfig: my-eevee-bot
   moduleName: my-module
   persistentVolumeClaim:
@@ -76,7 +76,7 @@ Default: false
 
 #### `metricsPort` (integer)
 MetricsPort defines the port to expose metrics on
-Default: 8080
+Default: 9000
 
 #### `ipcConfig` (string)
 IPC configuration name
