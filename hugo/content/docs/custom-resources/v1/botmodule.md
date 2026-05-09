@@ -122,9 +122,36 @@ Reference to a `backupschedule` resource in the same namespace. When set, the op
 | `name` | Name of the backupschedule resource |
 
 #### `bootstrapFromBackup` (object, optional)
-When set, the operator restores the latest backup from S3 into this module's PVC before starting the deployment for the first time. Subsequent reconciliations ignore this field (no re-restore). The operator tracks bootstrapped state via an annotation.
+When set, the operator restores the latest backup from S3 into this module's PVC before starting the deployment for the first time. Subsequent reconciliations ignore this field (no re-restore). The operator tracks bootstrapped state via the `eevee.bot/bootstrapped` annotation on the PVC itself.
 
 | Field | Description |
 |-------|-------------|
 | `s3Store.name` | Name of the s3store resource containing the backup |
 | `image` | Container image to use for the restore job |
+
+### Status
+
+The operator updates the `status` subresource on every reconciliation to reflect the current state of the module.
+
+| Reason | Description |
+|--------|-------------|
+| `Pending` | Reconciliation in progress |
+| `WaitingForBackup` | `bootstrapFromBackup` is set but no backups were found in S3 |
+| `Bootstrapping` | A restore Job is running to bootstrap the PVC from a backup |
+| `BootstrapRestoreFailed` | The bootstrap restore Job failed or timed out |
+| `Disabled` | `spec.enabled` is `false` — the deployment has been removed |
+| `Creating` | The deployment was just created and may not be ready yet |
+| `Updating` | The deployment is rolling out a new spec |
+| `Ready` | The deployment is healthy — all replicas are available |
+| `Unavailable` | The deployment is degraded — some replicas are unavailable |
+
+```yaml
+apiVersion: eevee.bot/v1
+kind: botmodule
+metadata:
+  name: my-module
+status:
+  reason: Ready
+  message: "Deployment ready (1/1 replicas available)"
+  lastTransitionTime: "2026-05-09T02:00:00Z"
+```
