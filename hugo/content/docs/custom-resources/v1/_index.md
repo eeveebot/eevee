@@ -12,3 +12,6 @@ components in Kubernetes.
 
 - [botmodule](botmodule/) - Defines individual bot modules
 - [ipcconfig](ipcconfig/) - Defines Inter-Process Communication configuration
+- [s3store](s3store/) - Defines S3-compatible object storage connections
+- [backupschedule](backupSchedule/) - Schedules recurring PVC backups to S3
+- [backuprestore](backupRestore/) - Triggers oneshot PVC restores from S3

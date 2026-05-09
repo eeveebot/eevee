@@ -113,3 +113,18 @@ ReadinessProbe defines a custom readiness probe for the module pod. Accepts a st
 
 #### `startupProbe` (object, optional)
 StartupProbe defines a custom startup probe for the module pod. Accepts a standard Kubernetes `V1Probe` object. If not specified, no startup probe is set (modules typically start quickly).
+
+#### `backupSchedule` (object, optional)
+Reference to a `backupschedule` resource in the same namespace. When set, the operator wires up backup CronJobs targeting this module's PVC.
+
+| Field | Description |
+|-------|-------------|
+| `name` | Name of the backupschedule resource |
+
+#### `bootstrapFromBackup` (object, optional)
+When set, the operator restores the latest backup from S3 into this module's PVC before starting the deployment for the first time. Subsequent reconciliations ignore this field (no re-restore). The operator tracks bootstrapped state via an annotation.
+
+| Field | Description |
+|-------|-------------|
+| `s3Store.name` | Name of the s3store resource containing the backup |
+| `image` | Container image to use for the restore job |
