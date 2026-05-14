@@ -126,6 +126,20 @@ When a message matches a registered broadcast listener, the router publishes the
 }
 ```
 
+## Broadcast Unregistration
+
+Modules can unregister broadcasts by publishing to the `broadcast.unregister` subject:
+
+```json
+{
+  "type": "broadcast.unregister",
+  "broadcastUUID": "unique-uuid-for-this-broadcast",
+  "broadcastDisplayName": "seen"
+}
+```
+
+The router removes the broadcast from its registry and stops forwarding messages to it. The `broadcastDisplayName` is used to unsubscribe from the corresponding `control.registerBroadcasts.<displayName>` subject.
+
 ## Automatic Re-registration
 
 The router periodically prompts modules to re-register broadcasts by publishing to:

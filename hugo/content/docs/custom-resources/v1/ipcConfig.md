@@ -17,7 +17,7 @@ The example demonstrates how to configure NATS as the messaging system for eevee
 ```yaml
 ---
 apiVersion: eevee.bot/v1
-kind: ipcconfig
+kind: IpcConfig
 metadata:
   name: my-eevee-bot
   namespace: my-eevee-bot

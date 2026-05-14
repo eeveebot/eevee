@@ -5,12 +5,12 @@ description: "eevee.bot/v1/s3store"
 draft: false
 ---
 
-The `s3store` CRD declares an S3-compatible object storage connection. It is referenced by `backupschedule` and `backuprestore` resources to centralize endpoint, bucket, and credential configuration — no need to duplicate connection details across multiple resources.
+The `s3store` CRD declares an S3-compatible object storage connection. It is referenced by `BackupSchedule` and `BackupRestore` resources to centralize endpoint, bucket, and credential configuration — no need to duplicate connection details across multiple resources.
 
 ```yaml
 ---
 apiVersion: eevee.bot/v1
-kind: s3store
+kind: S3Store
 metadata:
   name: my-minio
   namespace: my-eevee-bot
@@ -28,6 +28,7 @@ spec:
       key: secretAccessKey
   bucket: eevee-backups
   prefix: prod/
+  # region: eu-west-1
   pathStyle: true
 ```
 
@@ -62,6 +63,12 @@ S3 bucket name
 #### `prefix` (string, optional)
 Common file prefix within the bucket for all objects managed by this store (e.g. `eevee/backups/`)
 
+#### `region` (string, optional)
+S3 region. For AWS, this should match the bucket region (e.g. `eu-west-1`). For S3-compatible stores (MinIO, Garage, etc.) the region may not matter — the default `us-east-1` is used when omitted.
+
+#### `signatureV2` (boolean, optional)
+Use S3 v2 signature instead of v4. Set to `true` for Ceph RADOSGW and older S3-compatible stores that require v2 signatures. Modern stores (AWS S3, MinIO, Garage) support v4 — leave `false`. Default: `false`
+
 #### `pathStyle` (boolean, optional)
 Use path-style addressing (`host/bucket`) instead of virtual-hosted-style (`bucket.host`). Set to `true` for MinIO and similar stores. Default: `false`
 
@@ -69,5 +76,4 @@ Use path-style addressing (`host/bucket`) instead of virtual-hosted-style (`buck
 
 | Field | Description |
 |-------|-------------|
-| `conditions` | Standard condition objects with `lastTransitionTime`, `message`, `reason` |
-| `lastConnectionTest` | Timestamp of the last successful connection test to the S3 endpoint |
+| `conditions` | Standard Kubernetes condition objects (`type`, `status`, `reason`, `message`, `lastTransitionTime`). The `Ready` condition reflects whether the S3 connection test succeeded. |

@@ -141,7 +141,7 @@ The `regex` field is matched against the message text (after the bot nick or pre
 Subscribe to `command.execute.<uuid>` to receive matched messages:
 
 ```typescript
-await nats.subscribe(`command.execute.${PING_COMMAND_UUID}`, (subject, message) => {
+await nats.subscribe(`command.execute.${PING_COMMAND_UUID}`, (subject: string, message: Nats.Msg) => {
   metrics.recordNatsSubscribe(subject);
 
   const data = JSON.parse(message.string());
@@ -320,7 +320,10 @@ import {
   initializeSystemMetrics,
   setupHttpServer,
   createNatsConnection,
+  NatsSubscriptionResult,
 } from '@eeveebot/libeevee';
+
+import * as Nats from 'nats';
 
 const moduleStartTime = Date.now();
 const metrics = createModuleMetrics('ping');
@@ -361,7 +364,7 @@ await registerCommand(
 );
 
 // Subscribe to command execution
-await nats.subscribe(`command.execute.${PING_COMMAND_UUID}`, (subject, message) => {
+await nats.subscribe(`command.execute.${PING_COMMAND_UUID}`, (subject: string, message: Nats.Msg) => {
   metrics.recordNatsSubscribe(subject);
   const data = JSON.parse(message.string());
 
@@ -424,10 +427,13 @@ Apply it with `kubectl apply -f ping.yaml` and the operator will create the depl
 | Subject | Direction | Description |
 |---------|-----------|-------------|
 | `command.register` | Module → Router | Register a command |
+| `command.unregister` | Module → Router | Unregister a command |
 | `command.execute.<uuid>` | Router → Module | Deliver a matched command |
 | `broadcast.register` | Module → Router | Register a broadcast listener |
+| `broadcast.unregister` | Module → Router | Unregister a broadcast listener |
 | `broadcast.message.<uuid>` | Router → Module | Deliver a matched broadcast |
 | `help.update` | Module → Help | Publish help entries |
+| `help.remove` | Module → Help | Remove help entries |
 | `help.updateRequest` | Help → Modules | Request help re-publication |
 | `chat.message.outgoing.<platform>.<instance>.>` | Module → Connector | Send a chat message |
 | `control.registerCommands` | Router → Modules | Request command re-registration |

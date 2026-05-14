@@ -29,6 +29,8 @@ The router subscribes to the following NATS subjects:
 | `chat.message.incoming.>` | Incoming messages from chat connectors |
 | `command.register` | Command registration requests from modules |
 | `broadcast.register` | Broadcast registration requests from modules |
+| `command.unregister` | Command unregistration requests from modules |
+| `broadcast.unregister` | Broadcast unregistration requests from modules |
 | `admin.request.router` | Admin requests for rate limit stats and command registry |
 | `stats.emit.request` | Requests for module stats (uptime, memory, metrics) |
 | `stats.uptime` | Requests for module uptime |
@@ -44,6 +46,7 @@ The router publishes to the following subjects:
 | `control.registerCommands` | Prompt modules to re-register commands (TTL-based) |
 | `control.registerBroadcasts` | Prompt modules to re-register broadcasts (TTL-based) |
 | `admin.response.router.*` | Admin response messages |
+| `help.remove` | Remove help entries for a module |
 | `stats.response.<replyChannel>` | Stats response messages |
 
 ## Configuration
@@ -75,7 +78,7 @@ botModules:
 
 ### Blocklist Configuration
 
-The router supports a blocklist to filter out messages from specific sources. Each blocklist entry is a set of regex patterns — if all provided patterns match, the message is dropped.
+Blocklist patterns are pre-compiled at config load time using a safe regex helper with a 500 character limit and fallback to `/.^/` on failure. Malformed patterns are logged and skipped rather than crashing the router.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -87,6 +90,14 @@ The router supports a blocklist to filter out messages from specific sources. Ea
 | `instance` | string | Regex to match the connection instance |
 | `channel` | string | Regex to match the channel |
 | `user` | string | Regex to match the user |
+
+## Rate Limiting
+
+The router enforces per-command rate limits with configurable granularity (`platform`, `instance`, `channel`, `user`, or `global`). When a user exceeds their limit:
+- **Drop mode**: The command is silently discarded
+- **Enqueue mode**: The command is queued and processed when capacity is available. Before processing a queued command, the rate limiter re-checks whether the command is still allowed, preventing stale queued commands from bypassing limits
+
+Rate limit notices are sent to users via IRC NOTICE with a 15-second cooldown per user to prevent notice spam.
 
 ## Monitoring
 

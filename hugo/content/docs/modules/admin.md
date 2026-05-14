@@ -41,7 +41,7 @@ All admin commands are prefixed with `admin` and require the user to be authenti
 Administrators are authenticated based on their platform-specific identifiers:
 
 - **IRC**: Hostmask matching — supports both exact matches and regex patterns. The module constructs a full hostmask in the format `user@host` and checks it against each admin's configured hostmask. If the regex is invalid, it falls back to exact string comparison.
-- Currently, only IRC authentication is supported; other platforms are rejected.
+- Currently, only IRC authentication is supported; other platforms are rejected. This is an intentional safety default — `isAuthenticatedAdmin` will return `false` for non-IRC platforms until Discord authentication is implemented.
 
 Only properly authenticated administrators can execute control commands. All command attempts are logged for security auditing.
 
@@ -59,6 +59,8 @@ Each admin entry in the config includes:
 ## Operator API Token
 
 The admin module requires the `mountOperatorApiToken` field to be set to `true` in the botmodule spec. This mounts the Kubernetes operator API token, which the module uses to communicate with the eevee operator for tasks such as listing deployed modules and triggering restarts.
+
+The `module-restart` command targets pods in the `NAMESPACE` environment variable (default: `eevee-bot`), which the operator injects automatically.
 
 ## NATS Subjects
 

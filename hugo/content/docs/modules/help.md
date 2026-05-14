@@ -113,6 +113,7 @@ Example payload published by a module at startup:
 | Subject | Direction | Purpose |
 |---------|-----------|---------|
 | `help.update` | Inbound | Modules publish their `HelpRegistration` payloads here |
+| `help.remove` | Inbound | Modules request removal of their help entries |
 | `help.updateRequest` | Outbound / Inbound | Help module requests all modules re-send their docs; modules may also request a full refresh |
 | `help.updateRequest.*` | Inbound | Module-specific update request (e.g. `help.updateRequest.tell`) |
 | `command.execute.{uuid}` | Inbound | Router dispatches matched `!help` / `!bots` commands here |

@@ -20,7 +20,7 @@ The IRC Connector bridges eevee.bot to IRC networks. It manages one or more IRC 
 
 ## Hot Reload
 
-Configuration is file-driven and **hot-reloaded**: when the YAML config file changes on disk, `chokidar` detects the change and connector-irc disconnects all existing clients and reconnects using the new settings, with no process restart required.
+Configuration is file-driven and **hot-reloaded**: when the YAML config file changes on disk, `chokidar` detects the change and connector-irc drains the NATS client (with a 3-second per-client timeout), disconnects all existing IRC clients, reconnects using the new settings, and recreates the NATS client so subscriptions are fresh. No process restart is required.
 
 ## NATS Subjects
 

@@ -172,6 +172,20 @@ This "command" matches all messages:
 }
 ```
 
+## Command Unregistration
+
+Modules can unregister commands by publishing to the `command.unregister` subject:
+
+```json
+{
+  "type": "command.unregister",
+  "commandUUID": "unique-uuid-for-this-command",
+  "commandDisplayName": "echo"
+}
+```
+
+The router removes the command from its registry and stops routing messages to it. The `commandDisplayName` is used to unsubscribe from the corresponding `control.registerCommands.<displayName>` subject.
+
 ## Re-registration
 
 The router periodically prompts modules to re-register their commands by publishing to the `control.registerCommands` subject. Modules should subscribe to this subject and re-register their commands when prompted.
