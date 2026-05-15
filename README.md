@@ -15,6 +15,7 @@ and consists of independent modules that communicate through a common message bu
 | [**Documentation**](https://eevee.bot/docs) | --- |
 | [**Helm Repo**](https://helm.eevee.bot) | --- |
 | [**Issues**](https://github.com/eeveebot/eevee/issues) | [![Issues](https://img.shields.io/github/issues/eeveebot/eevee)](https://github.com/eeveebot/eevee/issues) |
+| [**MetaRepo**](https://github.com/eeveebot/eevee) | [![Build](https://github.com/eeveebot/eevee/actions/workflows/hugo.yml/badge.svg?branch=main)](https://github.com/eeveebot/eevee/actions/workflows/hugo.yml) |
 | [**.GitHub**](https://github.com/eeveebot/.github) | --- |
 | [**Admin**](https://github.com/eeveebot/admin) | [![Build](https://github.com/eeveebot/admin/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/admin/actions/workflows/build-image.yml) |
 | [**Calculator**](https://github.com/eeveebot/calculator) | [![Build](https://github.com/eeveebot/calculator/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/calculator/actions/workflows/build-image.yml) |
@@ -26,17 +27,17 @@ and consists of independent modules that communicate through a common message bu
 | [**Echo**](https://github.com/eeveebot/echo) | [![Build](https://github.com/eeveebot/echo/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/echo/actions/workflows/build-image.yml) |
 | [**Emote**](https://github.com/eeveebot/emote) | [![Build](https://github.com/eeveebot/emote/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/emote/actions/workflows/build-image.yml) |
 | [**GitOps**](https://github.com/eeveebot/gitops) | --- |
+| [**GitHub**](https://github.com/eeveebot/github) | [![Build](https://github.com/eeveebot/github/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/github/actions/workflows/build-image.yml) |
 | [**Helm Git Repo**](https://github.com/eeveebot/helm) | [![Build](https://github.com/eeveebot/helm/actions/workflows/publish-charts.yml/badge.svg?branch=main)](https://github.com/eeveebot/helm/actions/workflows/publish-charts.yml) |
 | [**Help**](https://github.com/eeveebot/help) | [![Build](https://github.com/eeveebot/help/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/help/actions/workflows/build-image.yml) |
 | [**Libeevee-JS**](https://github.com/eeveebot/libeevee-js) | [![Node.js Package](https://github.com/eeveebot/libeevee-js/actions/workflows/publish.yml/badge.svg)](https://github.com/eeveebot/libeevee-js/actions/workflows/publish.yml) |
-| [**MetaRepo**](https://github.com/eeveebot/eevee) | [![Build](https://github.com/eeveebot/eevee/actions/workflows/hugo.yml/badge.svg?branch=main)](https://github.com/eeveebot/eevee/actions/workflows/hugo.yml) |
 | [**Operator**](https://github.com/eeveebot/operator) | [![Build Operator Image](https://github.com/eeveebot/operator/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/operator/actions/workflows/build-image.yml) |
 | [**Router**](https://github.com/eeveebot/router) | [![Build](https://github.com/eeveebot/router/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/router/actions/workflows/build-image.yml) |
-| [**Tell**](https://github.com/eeveebot/tell) | [![Build](https://github.com/eeveebot/tell/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/tell/actions/workflows/build-image.yml) |
 | [**Seen**](https://github.com/eeveebot/seen) | [![Build](https://github.com/eeveebot/seen/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/seen/actions/workflows/build-image.yml) |
+| [**Superslap**](https://github.com/eeveebot/superslap) | [![Build](https://github.com/eeveebot/superslap/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/superslap/actions/workflows/build-image.yml) |
+| [**Tell**](https://github.com/eeveebot/tell) | [![Build](https://github.com/eeveebot/tell/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/tell/actions/workflows/build-image.yml) |
 | [**URL Title**](https://github.com/eeveebot/urltitle) | [![Build](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/urltitle/actions/workflows/build-image.yml) |
 | [**Weather**](https://github.com/eeveebot/weather) | [![Build](https://github.com/eeveebot/weather/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/weather/actions/workflows/build-image.yml) |
-| [**Superslap**](https://github.com/eeveebot/superslap) | [![Build Status](https://github.com/eeveebot/superslap/actions/workflows/build-image.yml/badge.svg)](https://github.com/eeveebot/superslap/actions/workflows/build-image.yml) |
 
 ## Getting Started
 
