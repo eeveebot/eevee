@@ -38,3 +38,5 @@ Each step in this flow is designed to be modular and independent, allowing for f
 - [**Incoming Messages**](../specification/incoming-messages/) - How messages flow through the system
 - [**Command Registry**](../specification/command-registry/) - How modules register to handle specific commands
 - [**Broadcast Registry**](../specification/broadcast-registry/) - How modules can listen to all messages matching criteria
+- [**Module Lifecycle**](../specification/module-lifecycle/) - Health checks, shutdown, and configuration
+- [**libeevee-js**](../specification/libeevee-js/) - Shared library API reference for all modules

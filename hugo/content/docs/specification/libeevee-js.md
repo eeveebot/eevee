@@ -1,5 +1,5 @@
 ---
-weight: 500
+weight: 240
 title: "libeevee-js"
 description: "Shared Node.js library for eevee.bot modules"
 draft: false

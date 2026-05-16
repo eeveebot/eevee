@@ -294,14 +294,14 @@ The `version` field is optional but strongly recommended — without it, the adm
 If your module needs to store data that survives pod restarts, add a PVC to your BotModule:
 
 ```yaml
-spec:
-  persistentVolumeClaim:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 1Gi
-  volumeMountPath: /data
+  spec:
+    persistentVolumeClaim:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+    volumeMountPath: /data
 ```
 
 The operator creates the PVC and sets the `MODULE_DATA` environment variable to the mount path (default `/data`). Use it in your module:
@@ -470,40 +470,51 @@ log.info('ping module ready', { producer: 'ping' });
 Every eevee module needs a Dockerfile for containerized deployment. Here's the standard pattern used by all eevee modules:
 
 ```dockerfile
-FROM docker.io/node:24-slim AS builder
+FROM docker.io/node:24-alpine AS builder
 
+USER root
+
+RUN set -exu \
+  && apk add --no-cache \
+    bash \
+    make
+
+USER node
+
+WORKDIR /build
+
+COPY --chown=node:node . /build
+
+ENV NODE_ENV=development
+
+RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN \
+  set -exu \
+  && cd /build \
+  && npm install --include=dev \
+  && npm run build
+
+FROM docker.io/node:24-alpine
+
+USER node
 WORKDIR /app
 
-COPY package*.json ./
+ENV NODE_ENV=production
 
-RUN --mount=type=secret,id=GIT_TOKEN \
-  git config --global url."https://$(cat /run/secrets/GIT_TOKEN)@github.com/".insteadOf "https://github.com/" && \
-  npm install && \
-  git config --global --unset url."https://github.com/".insteadOf
+COPY --chown=node:node package.json package-lock.json .npmrc /app/
 
-COPY . .
-RUN npm run build
+RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN \
+  npm install
 
-FROM docker.io/node:24-slim
+COPY --from=builder /build/dist /app/dist
 
-WORKDIR /app
+ENTRYPOINT ["/bin/sh"]
 
-COPY package*.json ./
-
-RUN --mount=type=secret,id=GIT_TOKEN \
-  git config --global url."https://$(cat /run/secrets/GIT_TOKEN)@github.com/".insteadOf "https://github.com/" && \
-  npm install --omit=dev && \
-  git config --global --unset url."https://github.com/".insteadOf
-
-COPY --from=builder /app/dist ./dist
-
-ENTRYPOINT ["/usr/local/bin/node"]
-CMD ["dist/main.mjs"]
+CMD ["-c", "node /app/dist/main.mjs"]
 ```
 
 Key points:
 - **Multi-stage build** — builder stage installs dev dependencies and compiles; final stage gets only production artifacts
-- **Secret-based auth** — the `GIT_TOKEN` secret is used to access `@eeveebot` packages on GitHub Container Registry. The token never touches the filesystem permanently — it's mounted, used for install, then the git config is unset
+- **Secret-based auth** — the `GIT_TOKEN` secret is used to access `@eeveebot` packages on GitHub Package Registry. The token never touches the filesystem permanently — it's mounted, used for install, then forgotten
 - **Generic ENTRYPOINT** — uses `node` as the entrypoint with `dist/main.mjs` as the default CMD, making it easy to override for debugging (`kubectl exec -it <pod> -- /bin/sh`)
 - **Fully qualified image names** — always use `docker.io/node:24-slim`, never just `node:24-slim` (never assume docker.io is the runtime default)
 
