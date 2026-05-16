@@ -24,7 +24,6 @@ independently.
 ## Infrastructure Modules
 
 - [operator](operator/) - Kubernetes operator for managing eevee resources
-- [crds](crds/) - Custom Resource Definitions for the eevee ecosystem
 - [cli](cli/) - Command-line interface for eevee management
 
 ## Utility Modules
@@ -34,8 +33,6 @@ independently.
 - [tell](tell/) - Interstellar answering machine for offline messaging
 - [urltitle](urltitle/) - Automatic URL title fetching for posted links
 - [weather](weather/) - Weather information provider
-- [libeevee-js](libeevee-js/) - Shared Node.js library for all eevee modules
-
 ## Fun Modules
 
 - [dice](dice/) - Virtual dice roller with D&D style dice notation support
