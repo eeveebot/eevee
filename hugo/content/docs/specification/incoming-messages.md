@@ -1,142 +1,170 @@
 ---
 weight: 220
-title: "The Lifecycle of a Message"
-description: "An explanation of message flow in eevee.bot"
+title: "Message Lifecycle"
+description: "How a message travels through eevee.bot"
 draft: false
 toc: true
 ---
 
+Every interaction with eevee.bot begins the same way: someone types something in a chat, and a small miracle of infrastructure carries their words across the void and back again. This page traces the full journey — from the moment a message arrives at a connector to the moment a reply appears on screen.
+
 ## A Message Is Born
 
-First, a user sends a message to the chat. This could be through any supported messaging platform, such as IRC, Discord, or Slack:
+It starts simply enough. A user sends a message to a chat channel on some platform — IRC, Discord, anywhere a connector is listening:
 
 ```none
-# Example on IRC
-<goos> | !weather 12345
+<goos> !weather 12345
 ```
 
-This represents the origin of all interactions with eevee.bot, where user input initiates the processing pipeline.
+Just words on a screen. But the connector is watching.
 
-## Your Voice Is Heard
+## The Connector Listens
 
-The message is heard by the appropriate module, which is responsible for handling the incoming messages from specific platforms (e.g., `irc-connector@thegooscloud`). This module formats the message into a standardized JSON payload and forwards it to the NATS message broker:
-
-Connector modules act as the bridge between external chat platforms and the eevee.bot ecosystem, translating platform-specific message formats into a consistent internal representation.
+The appropriate connector module — say, `connector-irc` — receives the message from the platform and translates it into a standard format that the rest of eevee.bot can understand. Platform-specific quirks are stripped away. What remains is a structured JSON payload, published to NATS:
 
 ```json
 {
-  "producer": "ircClient",
-  "subject": "chat.message.incoming.irc.thegooscloud.eevee.#general.goos@honk.com",
-  "moduleUUID": "a3e978d9-33af-4d5c-b750-8b3c82e9ee17",
   "type": "chat.message.incoming",
-  "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed",
   "platform": "irc",
-  "instance": "eevee",
-  "network": "thegooscloud",
+  "instance": "liberachat",
+  "network": "irc.libera.chat",
   "channel": "#general",
-  "user": "goos",
-  "userHost": "honk.com",
+  "nick": "goos",
+  "user": "goosident",
+  "userHost": "user/host",
   "text": "!weather 12345",
+  "time": "2026-05-16T00:00:00.000Z",
+  "account": "goosaccount",
   "botNick": "eevee",
-  "commonPrefixRegex": "^[!~]",
-  "rawEvent": {}
+  "commonPrefixRegex": "^[!~]"
 }
 ```
 
-The message is published to a subject with the format: `chat.message.incoming.$platform.$network.$instance.$channel.$user`
+The message is published to a NATS subject with the format:
 
-## We Seek to Understand
+```
+chat.message.incoming.<platform>.<instance>.<channel>.<nick>
+```
 
-The `router` module consumes the incoming message from NATS. The router performs several tasks:
+Connectors are the bridge between the outside world and eevee.bot's nervous system. Each platform gets its own connector, and each connector may manage multiple connections. They do the lonely work of translation — turning the chaos of IRC events and Discord gateway messages into something the router can reason about.
 
-1. **Command Matching:** The router attempts to match the message text against any registered command regular expressions.
-2. **Broadcast Matching:** The router also checks if the message matches any registered broadcast listeners.
-3. **Rate Limiting:** It checks the message against any rate limiting rules.
-4. **Blocklist Filtering:** It checks if the message matches any configured blocklist patterns.
-5. **Emitting Command Messages:** For each matching command, the router emits a structured message back into NATS with additional metadata.
-6. **Emitting Broadcast Messages:** For each matching broadcast, the router emits a message to the broadcast channel.
+## The Router Decides
 
-The router serves as the central intelligence of eevee.bot, determining how each message should be processed and where it should be routed. This centralized approach ensures consistent handling of all messages while maintaining the modularity of individual components.
+The `router` module subscribes to `chat.message.incoming.>` and receives every message that every connector publishes. It is the central intelligence of the system, and it has opinions.
+
+### Blocklist
+
+First, the router checks the message against the configured blocklist. Blocklist entries are regex patterns scoped by platform, network, instance, channel, or user. If a message matches, it is silently dropped. No command matching, no broadcasts, no second chances. Blocklist patterns are pre-compiled at config load time using the safe `compileRegex` helper (500 character limit, fallback to `/.^/` on failure).
+
+### Command Matching
+
+If the message survives the blocklist, the router checks it against all registered command patterns. For each command, the router:
+
+1. Checks the scope filters (platform, network, instance, channel, user, nick) — all must match
+2. Strips the platform prefix (e.g. `!`) or nick prefix (e.g. `eevee:`) if the command allows it
+3. Matches the remaining text against the command's regex pattern
+
+Each matching command triggers a `command.execute.<uuid>` message (subject to rate limiting — see below). Multiple commands can match a single message.
+
+### Broadcast Matching
+
+Independently, the router checks the message against all registered broadcast listeners. Broadcasts use the same scope filters but add an optional `messageFilterRegex` for content matching. Each matching broadcast triggers a `broadcast.message.<uuid>` message. Broadcasts are always delivered — they are not subject to rate limiting.
+
+If a message matches neither a command nor a broadcast, it is dropped. Most messages are. The router is quietly selective.
 
 ### Command Execution Message
 
-For matched commands, the router publishes to the subject `command.execute.$commandUUID`:
+For each matched command, the router publishes to `command.execute.<commandUUID>`:
 
 ```json
 {
   "platform": "irc",
-  "network": "thegooscloud",
-  "instance": "eevee",
+  "network": "irc.libera.chat",
+  "instance": "liberachat",
   "channel": "#general",
   "user": "goos",
-  "userHost": "honk.com",
+  "nick": "goos",
+  "userHost": "user/host",
   "text": "12345",
   "originalText": "!weather 12345",
   "matchedCommand": "!weather",
-  "timestamp": "2023-01-01T00:00:00.000Z"
+  "matchedText": "12345",
+  "timestamp": "2026-05-16T00:00:00.000Z"
 }
 ```
 
+Note the distinction between `text` and `originalText` — the prefix has been stripped from `text`, while `originalText` preserves the full message. The `matchedText` field contains the text that was actually tested against the command regex.
+
 ### Broadcast Message
 
-For matched broadcasts, the router publishes to the subject `broadcast.message.$broadcastUUID`:
+For each matched broadcast, the router publishes to `broadcast.message.<broadcastUUID>`:
 
 ```json
 {
   "platform": "irc",
-  "network": "thegooscloud",
-  "instance": "eevee",
+  "network": "irc.libera.chat",
+  "instance": "liberachat",
   "channel": "#general",
   "user": "goos",
-  "userHost": "honk.com",
+  "nick": "goos",
+  "userHost": "user/host",
   "text": "!weather 12345",
-  "timestamp": "2023-01-01T00:00:00.000Z"
+  "timestamp": "2026-05-16T00:00:00.000Z"
 }
 ```
 
-## We Want to Help
+Broadcast messages are always the full, unmodified text — no prefix stripping.
 
-The parsed command message is now delivered to the target module, which is identified by the `commandUUID`. This module performs the necessary action to fulfill the command, such as querying an external weather API. If the command requires a response, the module will construct and send a response message back to NATS.
+### Rate Limiting
 
-Response messages are published to subjects that vary by module implementation, but typically follow patterns like `chat.message.outgoing.$platform.$network.$instance.$channel` for chat responses.
+Each command registration includes rate limit configuration. When a command would be executed but its rate limit has been exceeded, the router behaves differently depending on the configured `mode`:
 
-This step represents the core functionality of eevee.bot modules, where the actual work is performed in response to user requests. Each module is responsible for a specific domain of functionality, allowing for focused development and maintenance.
+- **`drop`** — the execution is silently discarded. No notification is sent to the user (unless a rate-limit notice is configured via the router's `notificationCooldown` setting, in which case an IRC NOTICE is sent to the user with a 15-second cooldown per user)
+- **`enqueue`** — the execution is queued and will be processed when the rate limit resets. The user's message is not lost — it's just delayed
 
-## Hear Our Voice
+Rate limits are scoped by `level` — `user`, `channel`, `instance`, `platform`, or `global`. A per-user limit of 5 requests per minute means each user gets their own bucket. A global limit means the entire bot shares one.
 
-The connector module consumes outgoing messages from NATS and sends them to the appropriate platform. For example, the `irc-connector` module would receive a message like:
+## A Module Responds
 
-This final step completes the round-trip of communication, delivering the module's response back to the user through the original chat platform.
+The command execution message arrives at the target module, which subscribed to `command.execute.<uuid>` at startup. The module does whatever it needs to do — query a weather API, roll some dice, look up a definition. Then it sends a response.
+
+Responses are published to `chat.message.outgoing.<platform>.<instance>.<channel>`:
 
 ```json
 {
   "channel": "#general",
-  "network": "thegooscloud",
-  "instance": "eevee",
+  "network": "irc.libera.chat",
+  "instance": "liberachat",
   "platform": "irc",
   "text": "goos: the weather for 12345 is sunny and 72°F",
   "trace": "c4f8f2e5-0fbe-4511-a398-cb43393c2eed"
 }
 ```
 
-And send it to the IRC channel:
+The `trace` field, when present, carries the original trace ID from the incoming message, allowing correlation between request and response in logs.
+
+Modules use `sendChatMessage()` from `@eeveebot/libeevee` to construct and publish these messages. For IRC actions (`/me`), modules use `sendAction()` instead, which publishes to `chat.action.outgoing.<platform>.<instance>.<channel>`.
+
+## The Connector Delivers
+
+The connector subscribes to outgoing message subjects for its connections. When it receives the response, it sends it to the appropriate platform — the reverse of how it all started:
 
 ```none
-# Example on IRC
-<eevee> | goos: the weather for 12345 is sunny and 72°F
+<eevee> goos: the weather for 12345 is sunny and 72°F
 ```
 
-## Notes
+And there it is. A message has traveled from a user, through a connector, across NATS, past the router's watchful eye, into a module that did some work, back across NATS, through the connector again, and out to the channel. The whole trip takes milliseconds. Nobody notices. That's the point.
 
-A module may register `.*` with no `prefix` specified to listen to all messages in a channel. This is useful for modules that need to react to specific content regardless of whether it starts with a command prefix. Notable examples include:
+## Passive Listeners
 
-- **`tell`**: This module listens to all messages to identify any commands for delayed delivery.
-- **`urltitle`**: This module listens to all messages to fetch and display titles of URLs posted in channels.
+Not every message needs a response. Some modules observe without replying:
 
-Additionally, modules can register for broadcast messages to receive copies of all messages that match their broadcast registration criteria, enabling features like logging or analytics.
+- **`seen`** tracks when users were last active — it registers a broadcast listener for all messages and quietly records timestamps
+- **`urltitle`** detects URLs in messages and posts their titles — it uses a broadcast with `messageFilterRegex: "https?://"` to only receive messages containing links
+- **`tell`** listens for delayed delivery commands — it uses a broadcast to observe messages and match tell/ask patterns
 
-These flexible registration options allow eevee.bot modules to implement a wide variety of functionality, from simple command responders to sophisticated monitoring and analysis tools.
+These modules never register commands. They live in the broadcast stream, watching and recording. The router treats them the same as any other broadcast subscriber — it just copies messages their way.
 
 ---
 
-**Related:** See [Module Lifecycle](/docs/specification/module-lifecycle/) for how modules start up and shut down, and [Writing a Module](/docs/guides/writing-a-module/) for a step-by-step guide to building a new module.
+**Related:** See [Module Lifecycle](/docs/specification/module-lifecycle/) for how modules start up and shut down, [Command Registry](/docs/specification/command-registry/) for command registration details, [Broadcast Registry](/docs/specification/broadcast-registry/) for broadcast registration details, and [Writing a Module](/docs/guides/writing-a-module/) for a step-by-step guide to building a new module.
