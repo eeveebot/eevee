@@ -40,7 +40,7 @@ Each module registers for broadcasts by publishing a message to the `broadcast.r
 
 - `type`: Must be `"broadcast.register"`
 - `broadcastUUID`: A unique UUID for this broadcast registration
-- `broadcastDisplayName`: Optional display name for logs and UI
+- `broadcastDisplayName`: Display name for logs and UI. Required by the libeevee helper (used for `control.registerBroadcasts.<displayName>` re-registration)
 - `platform`: Regex pattern to match the platform (e.g., `"^irc$"`, `"^discord$"`, `"^.*$"`). Optional, defaults to `".*"`.
 - `network`: Regex pattern to match the network within the platform. Optional, defaults to `".*"`.
 - `instance`: Regex pattern to match the connection instance. Optional, defaults to `".*"`.
@@ -120,6 +120,7 @@ When a message matches a registered broadcast listener, the router publishes the
   "instance": "eevee",
   "channel": "#general",
   "user": "goos",
+  "nick": "goos",
   "userHost": "honk.com",
   "text": "!weather 12345",
   "timestamp": "2023-01-01T00:00:00.000Z"
@@ -133,12 +134,11 @@ Modules can unregister broadcasts by publishing to the `broadcast.unregister` su
 ```json
 {
   "type": "broadcast.unregister",
-  "broadcastUUID": "unique-uuid-for-this-broadcast",
-  "broadcastDisplayName": "seen"
+  "broadcastUUID": "unique-uuid-for-this-broadcast"
 }
 ```
 
-The router removes the broadcast from its registry and stops forwarding messages to it. The `broadcastDisplayName` is used to unsubscribe from the corresponding `control.registerBroadcasts.<displayName>` subject.
+The router removes the broadcast from its registry and stops forwarding messages to it.
 
 ## Automatic Re-registration
 

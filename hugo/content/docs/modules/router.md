@@ -46,7 +46,6 @@ The router publishes to the following subjects:
 | `control.registerCommands` | Prompt modules to re-register commands (TTL-based) |
 | `control.registerBroadcasts` | Prompt modules to re-register broadcasts (TTL-based) |
 | `admin.response.router.*` | Admin response messages |
-| `help.remove` | Remove help entries for a module |
 | `stats.response.<replyChannel>` | Stats response messages |
 
 ## Configuration

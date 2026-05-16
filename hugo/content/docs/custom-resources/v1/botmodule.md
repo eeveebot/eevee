@@ -105,6 +105,9 @@ Default: true
 #### `envSecret` (object)
 EnvSecret defines optional secrets to be injected as environment variables
 
+#### `resources` (object)
+Resources defines standard Kubernetes resource requests and limits for the container (CPU, memory, etc.). Accepts a standard Kubernetes `V1ResourceRequirements` object. If not specified, the container runs with default limits.
+
 #### `livenessProbe` (object, optional)
 LivenessProbe defines a custom liveness probe for the module pod. Accepts a standard Kubernetes `V1Probe` object (httpGet, tcpSocket, exec, etc.). If not specified, the operator provides a default HTTP GET probe against `/health` on the module's metricsPort.
 
@@ -127,7 +130,8 @@ When set, the operator restores the latest backup from S3 into this module's PVC
 | Field | Description |
 |-------|-------------|
 | `s3Store.name` | Name of the S3Store resource containing the backup |
-| `image` | Container image to use for the restore job |
+| `image` | Container image to use for the restore job (default: `ghcr.io/eeveebot/backupJob:latest`) |
+| `imagePullPolicy` | Image pull policy for the restore job container. One of `Always`, `IfNotPresent`, `Never` (default: `IfNotPresent`) |
 
 ### Status
 

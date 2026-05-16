@@ -231,7 +231,8 @@ const subs = await registerCommand(nats, {
 | `commandUUID` | `string` | — | Unique command identifier |
 | `commandDisplayName` | `string` | — | Human-readable name (also used for control re-sub) |
 | `regex` | `string` | — | Trigger regex |
-| `platformPrefixAllowed` | `boolean` | — | Allow platform prefix before command |
+| `platformPrefixAllowed` | `boolean` | `true` | Allow platform prefix before command (required when `true`) |
+| `nickPrefixAllowed` | `boolean` | `false` | Allow bot nick as prefix (required when `true` and `platformPrefixAllowed` is `false`) |
 | `ratelimit` | `RateLimitConfig` | — | Rate limiting config |
 | `platform` | `string` | `'.*'` | Platform filter |
 | `network` | `string` | `'.*'` | Network filter |
@@ -324,7 +325,6 @@ Unregisters a command by publishing to `command.unregister`.
 ```ts
 await unregisterCommand(nats, {
   commandUUID: '9e5c1e0c-...',
-  commandDisplayName: 'echo',
 }, metrics);
 ```
 
@@ -333,13 +333,16 @@ await unregisterCommand(nats, {
 | Field | Type | Description |
 |---|---|---|
 | `commandUUID` | `string` | UUID of the command to unregister |
-| `commandDisplayName` | `string` | Display name (used for control re-sub) |
 
 #### `unregisterBroadcast(nats, options, metrics?)`
 
 Unregisters a broadcast by publishing to `broadcast.unregister`.
 
-**BroadcastUnregistrationOptions:** same fields as `CommandUnregistrationOptions`.
+**BroadcastUnregistrationOptions:**
+
+| Field | Type | Description |
+|---|---|---|
+| `broadcastUUID` | `string` | UUID of the broadcast to unregister |
 
 #### `unregisterHelp(nats, moduleName, metrics?)`
 

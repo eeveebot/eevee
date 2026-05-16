@@ -59,7 +59,7 @@ Each forecast day shows the day name, conditions summary, high and low temperatu
 
 ## Unit Persistence
 
-When you use a unit flag (`-c`, `-f`, or `-k`), the module saves that preference to the database. Future `weather` and `forecast` commands will use your stored preference automatically — no need to specify the flag every time.
+When you use a flag (e.g. `-c`, `-f`, `-k`, `-o`), the module saves that preference to the database. Future `weather` and `forecast` commands will use your stored preference automatically — no need to specify the flag every time.
 
 To change your default units, just use a flag again:
 
@@ -128,3 +128,4 @@ All keys are optional — sensible defaults are provided by `@eeveebot/libeevee`
 | `NATS_HOST` | NATS server hostname | Yes |
 | `NATS_TOKEN` | NATS authentication token | Yes |
 | `MODULE_CONFIG_PATH` | Path to the YAML configuration file | No |
+| `HTTP_API_PORT` | Port for the HTTP metrics/health server (default: `9000`) | No |

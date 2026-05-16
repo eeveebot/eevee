@@ -39,6 +39,8 @@ Configuration is file-driven and **hot-reloaded**: when the YAML config file cha
 | `chat.notice.outgoing.irc.{name}.>` | `{ channel, text }` | Send a notice to a channel |
 | `chat.notice.outgoing.irc.{name}` | `{ target, text }` | Send a private notice to a user |
 
+> **Note:** For outgoing messages and notices, if no `channel` is provided, the message falls back to `#eevee`. In a future release, non-targeted messages (no channel provided) will be dropped instead.
+
 ### Control Channel
 
 Send JSON messages to `control.chatConnectors.irc.{name}` to control the bot at runtime:
@@ -163,7 +165,7 @@ The `stats.emit.request` response includes a `connector` array with per-connecti
 {
   "module": "connector-irc",
   "stats": {
-    "version": "1.7.1",
+    "version": "0.4.20",
     "connector": [
       {
         "name": "liberachat",
@@ -302,3 +304,9 @@ postConnect:
   - channel: '#private'
     key: channelkey
 ```
+
+### Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `HTTP_API_PORT` | No | `9000` | Port for the HTTP metrics/health server |

@@ -40,3 +40,16 @@ spec:
           name: my-irc-network-secrets
         key: token
 ```
+
+## Specification
+
+### Managed NATS Properties
+
+#### `image` (string)
+NATS container image to use (e.g. `docker.io/nats:latest`)
+
+#### `imagePullPolicy` (string, optional)
+Image pull policy for the NATS container. One of `Always`, `IfNotPresent`, `Never`. Default: `IfNotPresent`
+
+#### `resources` (object, optional)
+Standard Kubernetes resource requests and limits for the NATS container (CPU, memory, etc.). Accepts a standard Kubernetes `V1ResourceRequirements` object. If not specified, the container runs with default limits.

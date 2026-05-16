@@ -38,6 +38,9 @@ Reference to the `S3Store` CR instance in the same namespace.
 #### `image` (string, required)
 Container image to use for the backup job (e.g. `ghcr.io/eevee/backup:latest`)
 
+#### `imagePullPolicy` (string, optional)
+Image pull policy for the backup job container. One of `Always`, `IfNotPresent`, `Never`. Default: `IfNotPresent`
+
 ## Status
 
 | Field | Description |

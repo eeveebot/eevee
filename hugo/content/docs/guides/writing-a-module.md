@@ -321,12 +321,10 @@ import { unregisterCommand, unregisterBroadcast, unregisterHelp } from '@eeveebo
 // Unregister on shutdown
 await unregisterCommand(nats, {
   commandUUID: PING_COMMAND_UUID,
-  commandDisplayName: 'ping',
 }, metrics);
 
 await unregisterBroadcast(nats, {
   broadcastUUID: OBSERVER_BROADCAST_UUID,
-  broadcastDisplayName: 'ping-observer',
 }, metrics);
 
 await unregisterHelp(nats, 'ping', metrics);
@@ -407,7 +405,6 @@ const PING_COMMAND_UUID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 registerGracefulShutdown([nats], async () => {
   await unregisterCommand(nats, {
     commandUUID: PING_COMMAND_UUID,
-    commandDisplayName: 'ping',
   }, metrics);
   await unregisterHelp(nats, 'ping', metrics);
 });

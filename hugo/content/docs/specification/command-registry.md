@@ -43,7 +43,7 @@ Each module registers commands by publishing a message to the `command.register`
 
 - `type`: Must be `"command.register"`
 - `commandUUID`: A unique UUID for this command registration
-- `commandDisplayName`: Optional display name for logs and UI
+- `commandDisplayName`: Display name for logs and UI. Required by the libeevee helper (used for `control.registerCommands.<displayName>` re-registration)
 - `platform`: Regex pattern to match the platform (e.g., `"^irc$"`, `"^discord$"`, `"^.*$"`). Optional, defaults to `".*"`.
 - `network`: Regex pattern to match the network within the platform. Optional, defaults to `".*"`.
 - `instance`: Regex pattern to match the connection instance. Optional, defaults to `".*"`.
@@ -51,9 +51,9 @@ Each module registers commands by publishing a message to the `command.register`
 - `user`: Regex pattern to match the user. Optional, defaults to `".*"`.
 - `nick`: Regex pattern to match the nick. Optional, defaults to `".*"`.
 - `regex`: Regex pattern to match the command itself
-- `platformPrefixAllowed`: Whether the platform's common prefix is allowed for this command
-- `nickPrefixAllowed`: Whether the bot's nickname can be used as a prefix for this command
-- `ratelimit`: Rate limiting configuration (set to `false` to disable)
+- `platformPrefixAllowed`: Whether the platform's common prefix character (e.g. `!`, `~`) can be used to trigger this command. When `true`, the prefix is **required** — the command won't match without it. Default: `true`
+- `nickPrefixAllowed`: Whether the bot's nickname can be used as a prefix for this command (e.g. `botnick: command`). When `true` and `platformPrefixAllowed` is `false`, the nick prefix is **required**. When both are `true`, either prefix is accepted (platform prefix tried first). Default: `false`
+- `ratelimit`: Rate limiting configuration (required, see `RateLimitConfig`)
   - `mode`: How to handle rate limited commands (`"enqueue"` or `"drop"`)
   - `level`: Scope of rate limiting (`"platform"`, `"instance"`, `"channel"`, `"user"`, or `"global"`)
   - `limit`: Number of allowed commands within the interval
@@ -143,7 +143,12 @@ This command matches messages like:
   "regex": "^~admin .*$",
   "platformPrefixAllowed": false,
   "nickPrefixAllowed": false,
-  "ratelimit": false
+  "ratelimit": {
+    "mode": "drop",
+    "level": "user",
+    "limit": 1,
+    "interval": "5m"
+  }
 }
 ```
 
@@ -168,7 +173,12 @@ This "command" matches all messages:
   "regex": "^.*$",
   "platformPrefixAllowed": false,
   "nickPrefixAllowed": false,
-  "ratelimit": false
+  "ratelimit": {
+    "mode": "enqueue",
+    "level": "channel",
+    "limit": 100,
+    "interval": "1m"
+  }
 }
 ```
 
@@ -179,12 +189,11 @@ Modules can unregister commands by publishing to the `command.unregister` subjec
 ```json
 {
   "type": "command.unregister",
-  "commandUUID": "unique-uuid-for-this-command",
-  "commandDisplayName": "echo"
+  "commandUUID": "unique-uuid-for-this-command"
 }
 ```
 
-The router removes the command from its registry and stops routing messages to it. The `commandDisplayName` is used to unsubscribe from the corresponding `control.registerCommands.<displayName>` subject.
+The router removes the command from its registry and stops routing messages to it.
 
 ## Re-registration
 

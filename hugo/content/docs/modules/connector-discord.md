@@ -51,7 +51,7 @@ Configuration is loaded from a YAML file and watched for changes using `chokidar
 
 | Subject Pattern | Description |
 |---|---|
-| `chat.message.outgoing.discord.<instance}.>` | Send a message to a Discord channel (requires `channelId` and `text` fields) |
+| `chat.message.outgoing.discord.<instance>.>` | Send a message to a Discord channel (requires `channelId` and `text` fields) |
 
 ### Control
 
@@ -94,7 +94,7 @@ Configuration is loaded from a YAML file and watched for changes using `chokidar
 **Message flow:**
 
 1. Discord user sends a message → `DiscordClient` emits `message` event → `main.mts` publishes to `chat.message.incoming.discord.*` NATS subject.
-2. Another module publishes to `chat.message.outgoing.discord.<instance}.>` → `main.mts` receives it → calls `DiscordClient.say(channelId, text)` → message appears in Discord.
+2. Another module publishes to `chat.message.outgoing.discord.<instance>.>` \u2192 `main.mts` receives it → calls `DiscordClient.say(channelId, text)` → message appears in Discord.
 
 ## Configuration
 
@@ -133,7 +133,6 @@ botModules:
         ident:
           quitMsg: "eevee.bot shutting down"
         discord:
-          token: "YOUR_BOT_TOKEN_HERE"
           intents:
             - "GUILDS"
             - "GUILD_MESSAGES"

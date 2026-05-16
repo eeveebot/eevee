@@ -23,7 +23,7 @@ The Admin module manages bot administrators and permissions. It loads administra
 
 ## Commands
 
-All admin commands are prefixed with `admin` and require the user to be authenticated.
+All admin commands are prefixed with `admin` and require the user to be authenticated. Commands accept the platform prefix character (e.g. `!admin` or `~admin`).
 
 | Command | Description |
 |---------|-------------|
@@ -62,6 +62,14 @@ The admin module requires the `mountOperatorApiToken` field to be set to `true` 
 
 The `module-restart` command targets pods in the `NAMESPACE` environment variable (default: `eevee-bot`), which the operator injects automatically.
 
+### Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `EEVEE_OPERATOR_API_TOKEN` | Yes | — | Token for authenticating with the eevee operator API |
+| `EEVEE_OPERATOR_API_URL` | Yes | — | URL of the eevee operator API |
+| `NAMESPACE` | No | `eevee-bot` | Kubernetes namespace for targeting pods (injected by operator) |
+
 ## NATS Subjects
 
 | Subject | Direction | Purpose |
@@ -72,6 +80,9 @@ The `module-restart` command targets pods in the `NAMESPACE` environment variabl
 | `help.updateRequest` | Inbound | Responds to help refresh requests |
 | `control.registerCommands.*` | Inbound | Re-registers commands on demand |
 | `stats.emit.request` | Inbound | Responds with uptime, memory, and Prometheus metrics |
+| `admin.response.router.ratelimit-stats` | Inbound | Receives rate limit statistics from the router |
+| `admin.response.router.command-registry` | Inbound | Receives command registry data from the router |
+| `chat.message.outgoing.<platform>.<instance>.<channel>` | Outbound | Sends command responses back to chat |
 
 ## Configuration
 
@@ -95,7 +106,6 @@ botModules:
         uuid: "123e4567-e89b-12d3-a456-426614174000"
         acceptedPlatforms:
         - "irc"
-        - "discord"
         authentication:
           irc:
             hostmask: "root@localhost"
@@ -133,11 +143,11 @@ botModules:
         listBotModules:
           mode: drop
           level: user
-          limit: 3
+          limit: 5
           interval: 1m
         botStats:
           mode: drop
           level: user
-          limit: 3
+          limit: 5
           interval: 1m
 ```

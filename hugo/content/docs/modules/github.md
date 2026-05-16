@@ -10,7 +10,7 @@ The github module lets users create GitHub issues through chat commands. After i
 ## Features
 
 - **`github issue create <title>`** — start creating a GitHub issue with the given title
-- **Confirmation flow** — after the command, the bot asks for a description; reply with the description text, then `confirm` to submit, or `cancel` to abort
+- **DM-based confirmation flow** — after the command, the bot switches to DMs; reply with the description text, then `confirm` to submit, or `cancel` to abort
 - **Configurable timeout** — pending confirmations expire after a configurable period (default 10 minutes)
 - **SQLite persistence** — issue records are stored in a local database for tracking
 - **Rate limiting** — configurable per-user or per-channel limits to prevent spam
@@ -25,6 +25,9 @@ The github module lets users create GitHub issues through chat commands. After i
 
 ```
 <user> github issue create Fix the login bug
+<bot>  I'll DM you to get more details.
+
+--- DM ---
 <bot>  I'll create an issue titled "Fix the login bug" on eeveebot/eevee.
        Send a description, then say "confirm" when ready, or "cancel" to abort.
 <user> The login page returns a 500 error when using SSO
@@ -70,7 +73,7 @@ ratelimit:
 
 defaultRepo: eeveebot/eevee
 
-# confirmationTimeoutMs: 600000  # 10 minutes
+# confirmationTimeoutMs: 600000  # 10 minutes (value in milliseconds)
 ```
 
 The `defaultRepo` field sets the target repository for issue creation. If omitted, it defaults to `eeveebot/eevee`.

@@ -44,6 +44,9 @@ Reference to the `S3Store` CR instance containing the backup.
 #### `image` (string, required)
 Container image to use for the restore job (e.g. `ghcr.io/eevee/backup:latest`)
 
+#### `imagePullPolicy` (string, optional)
+Image pull policy for the restore job container. One of `Always`, `IfNotPresent`, `Never`. Default: `IfNotPresent`
+
 #### `backupId` (string, optional)
 UUID of the specific backup to restore. If omitted, the operator lists objects at the module's S3 prefix and restores the latest backup by S3 `LastModified` timestamp.
 

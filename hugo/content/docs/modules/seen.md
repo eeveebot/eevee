@@ -13,6 +13,7 @@ The Seen module tracks when users were last seen in channels, allowing other use
 - Check when a user was last seen with `seen <username>`
 - See who has been active recently with `since <minutes>`
 - List inactive users with `lurkers`
+- Generate detailed lurkers reports with `lurkers-report` (channel-admin only)
 - Persistent storage using SQLite database
 - Rate limiting to prevent abuse
 - Multi-platform support
@@ -57,10 +58,25 @@ The bot will respond with a list of users who have been active in the last 30 mi
 To see who has not been active recently:
 
 ```none
-lurkers
+lurkers [days] [--limit N]
 ```
 
 The bot will respond with a list of users who have not been seen recently in the channel.
+
+- `days` — number of days to look back (default: 30, max: 365)
+- `--limit N` / `-l N` — maximum number of lurkers to display (default: 10, max: 50)
+
+### Generate a Lurkers Report
+
+To generate a comprehensive lurkers report sent via private message:
+
+```none
+lurkers-report [days]
+```
+
+This command is restricted to channel admins (users with `+o`, `+O`, `+a`, or `+q` modes). It produces a detailed breakdown of active, inactive, and never-seen users in the channel, delivered via PM.
+
+- `days` — number of days for the activity window (default: 30, max: 365)
 
 ## Configuration
 

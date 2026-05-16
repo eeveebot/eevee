@@ -106,7 +106,6 @@ botModules:
     envSecret:
       name: eevee-bot-urltitle-secrets
     moduleConfig: |
-      enabled: true
       ratelimit:
         mode: drop
         level: user
