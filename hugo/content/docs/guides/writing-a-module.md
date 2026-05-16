@@ -62,7 +62,7 @@ Every module follows the same startup pattern. Here's the skeleton:
 ```typescript
 // src/main.mts
 
-import { v4 as uuidv4 } from 'crypto'; // or use a UUID library
+import fs from 'node:fs';
 
 import {
   NatsClient,
@@ -80,7 +80,15 @@ import {
   initializeSystemMetrics,
   setupHttpServer,
   createNatsConnection,
+  NatsSubscriptionResult,
 } from '@eeveebot/libeevee';
+
+import * as Nats from 'nats';
+
+// Read version from package.json (used for stats and drift detection)
+const { version: moduleVersion } = JSON.parse(
+  fs.readFileSync(new URL('package.json', 'file://' + process.cwd() + '/'), 'utf8')
+);
 
 // Record startup time
 const moduleStartTime = Date.now();
@@ -97,7 +105,7 @@ setupHttpServer({
 
 // Print the logo
 console.log(eeveeLogo);
-log.info('ping module starting up', { producer: 'ping' });
+log.info(`ping module v${moduleVersion} starting up`, { producer: 'ping' });
 
 // Connect to NATS
 const nats = await createNatsConnection();
@@ -249,18 +257,37 @@ const broadcastSubs = await registerBroadcast(
 
 The helper also subscribes to `control.registerBroadcasts` and `control.registerBroadcasts.<displayName>` for automatic re-registration.
 
+## Version Tracking
+
+All eevee modules report their version in the stats response. This is used by the admin `health` command to detect **version drift** — when a module's running version doesn't match the deployed image tag. Read the version from `package.json` at startup:
+
+```typescript
+import fs from 'node:fs';
+
+const { version: moduleVersion } = JSON.parse(
+  fs.readFileSync(new URL('package.json', 'file://' + process.cwd() + '/'), 'utf8')
+);
+```
+
+> **Why `process.cwd()`?** In Docker, code runs from `/app/dist/main.mjs` but `package.json` is at `/app/package.json`. Using `new URL('../package.json', import.meta.url)` resolves incorrectly to `/package.json` — always use `process.cwd()` instead.
+
+Pass the version to `registerStatsHandlers` (see below) so it's included in stats responses.
+
 ## Registering Stats Handlers
 
-The stats system lets the CLI and other tools query module uptime and resource usage:
+The stats system lets the CLI, admin health, and other tools query module uptime, resource usage, and version. Include the `version` field for drift detection:
 
 ```typescript
 const statsSubs = registerStatsHandlers({
   nats,
   moduleName: 'ping',
   startTime: moduleStartTime,
+  version: moduleVersion,
   metrics,
 });
 ```
+
+The `version` field is optional but strongly recommended — without it, the admin health command can't detect when a module is running an outdated image.
 
 ## Persistent Data
 
@@ -284,6 +311,29 @@ const dataPath = process.env.MODULE_DATA || '/data';
 const db = new Database(path.join(dataPath, 'mydata.db'));
 ```
 
+## Unregistration
+
+When a module shuts down, it should unregister its commands, broadcasts, and help entries so the router and help module don't route to a dead subscriber. libeevee provides helpers that mirror the registration ones:
+
+```typescript
+import { unregisterCommand, unregisterBroadcast, unregisterHelp } from '@eeveebot/libeevee';
+
+// Unregister on shutdown
+await unregisterCommand(nats, {
+  commandUUID: PING_COMMAND_UUID,
+  commandDisplayName: 'ping',
+}, metrics);
+
+await unregisterBroadcast(nats, {
+  broadcastUUID: OBSERVER_BROADCAST_UUID,
+  broadcastDisplayName: 'ping-observer',
+}, metrics);
+
+await unregisterHelp(nats, 'ping', metrics);
+```
+
+In practice, you typically call these in a `registerGracefulShutdown` cleanup callback. The helpers publish to `command.unregister`, `broadcast.unregister`, and `help.remove` respectively.
+
 ## Logging
 
 Use the structured logger from libeevee — never `console.log`:
@@ -305,13 +355,13 @@ Here's the full `ping` module:
 ```typescript
 // src/main.mts
 
+import fs from 'node:fs';
+
 import {
-  NatsClient,
   log,
   eeveeLogo,
   registerGracefulShutdown,
   registerCommand,
-  registerBroadcast,
   registerHelp,
   registerStatsHandlers,
   loadModuleConfig,
@@ -320,10 +370,16 @@ import {
   initializeSystemMetrics,
   setupHttpServer,
   createNatsConnection,
-  NatsSubscriptionResult,
+  unregisterCommand,
+  unregisterHelp,
 } from '@eeveebot/libeevee';
 
 import * as Nats from 'nats';
+
+// Read version for stats and drift detection
+const { version: moduleVersion } = JSON.parse(
+  fs.readFileSync(new URL('package.json', 'file://' + process.cwd() + '/'), 'utf8')
+);
 
 const moduleStartTime = Date.now();
 const metrics = createModuleMetrics('ping');
@@ -335,7 +391,7 @@ setupHttpServer({
 });
 
 console.log(eeveeLogo);
-log.info('ping module starting up', { producer: 'ping' });
+log.info(`ping module v${moduleVersion} starting up`, { producer: 'ping' });
 
 // Connect to NATS
 const nats = await createNatsConnection();
@@ -344,11 +400,17 @@ const nats = await createNatsConnection();
 interface PingConfig { message?: string }
 const config = loadModuleConfig<PingConfig>({ message: 'Pong!' });
 
-// Register graceful shutdown
-registerGracefulShutdown([nats]);
-
 // Command UUID (generate your own)
 const PING_COMMAND_UUID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+
+// Register graceful shutdown with cleanup
+registerGracefulShutdown([nats], async () => {
+  await unregisterCommand(nats, {
+    commandUUID: PING_COMMAND_UUID,
+    commandDisplayName: 'ping',
+  }, metrics);
+  await unregisterHelp(nats, 'ping', metrics);
+});
 
 // Register command with router
 await registerCommand(
@@ -391,11 +453,59 @@ await registerHelp(nats, 'ping', [
   },
 ], metrics);
 
-// Register stats handlers
-registerStatsHandlers({ nats, moduleName: 'ping', startTime: moduleStartTime, metrics });
+// Register stats handlers (includes version for drift detection)
+registerStatsHandlers({ nats, moduleName: 'ping', startTime: moduleStartTime, version: moduleVersion, metrics });
 
 log.info('ping module ready', { producer: 'ping' });
 ```
+
+### Notes on the complete module
+
+- **Version from `package.json`** — read at startup using `process.cwd()` (not `import.meta.url`, which breaks in Docker). Passed to `registerStatsHandlers` so `admin health` can detect drift.
+- **Unregistration on shutdown** — the `registerGracefulShutdown` cleanup callback unregisters the command and help entries. Without this, the router would keep routing messages to a dead subscriber until it times out.
+- **Typed callbacks** — the `nats.subscribe` callback uses explicit `(subject: string, message: Nats.Msg)` types. This is required under strict mode — untyped params become implicit `any`.
+
+## Dockerfile
+
+Every eevee module needs a Dockerfile for containerized deployment. Here's the standard pattern used by all eevee modules:
+
+```dockerfile
+FROM docker.io/node:24-slim AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN --mount=type=secret,id=GIT_TOKEN \
+  git config --global url."https://$(cat /run/secrets/GIT_TOKEN)@github.com/".insteadOf "https://github.com/" && \
+  npm install && \
+  git config --global --unset url."https://github.com/".insteadOf
+
+COPY . .
+RUN npm run build
+
+FROM docker.io/node:24-slim
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN --mount=type=secret,id=GIT_TOKEN \
+  git config --global url."https://$(cat /run/secrets/GIT_TOKEN)@github.com/".insteadOf "https://github.com/" && \
+  npm install --omit=dev && \
+  git config --global --unset url."https://github.com/".insteadOf
+
+COPY --from=builder /app/dist ./dist
+
+ENTRYPOINT ["/usr/local/bin/node"]
+CMD ["dist/main.mjs"]
+```
+
+Key points:
+- **Multi-stage build** — builder stage installs dev dependencies and compiles; final stage gets only production artifacts
+- **Secret-based auth** — the `GIT_TOKEN` secret is used to access `@eeveebot` packages on GitHub Container Registry. The token never touches the filesystem permanently — it's mounted, used for install, then the git config is unset
+- **Generic ENTRYPOINT** — uses `node` as the entrypoint with `dist/main.mjs` as the default CMD, making it easy to override for debugging (`kubectl exec -it <pod> -- /bin/sh`)
+- **Fully qualified image names** — always use `docker.io/node:24-slim`, never just `node:24-slim` (never assume docker.io is the runtime default)
 
 ## Deploying
 

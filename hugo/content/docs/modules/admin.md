@@ -13,7 +13,7 @@ The Admin module manages bot administrators and permissions. It loads administra
 - Dynamic channel joining and parting across platforms
 - Rate-limit statistics inspection (`admin show-ratelimits`)
 - Command registry inspection (`admin show-command-registry`)
-- Module uptime reporting (`admin module-uptime`)
+- Health status check (`admin health`) — shows ok/degraded/down/disabled/unknown per module with connector details and version drift detection
 - Module restart capability (`admin module-restart`)
 - Bot module listing with deployment info (`admin list-bot-modules`)
 - Bot statistics aggregation (`admin bot-stats`)
@@ -31,7 +31,7 @@ All admin commands are prefixed with `admin` and require the user to be authenti
 | `admin part <platform> <network> <instance> <channel>` | Leave a channel on a specific platform/network/instance |
 | `admin show-ratelimits` | Show current rate limit statistics from the router |
 | `admin show-command-registry` | Show the current command registry from the router |
-| `admin module-uptime` | Show uptime information for all active bot modules |
+| `admin health` | Show health status for all bot modules (ok/degraded/down/disabled/unknown) |
 | `admin module-restart <module>` | Restart a specific module |
 | `admin list-bot-modules` | List all bot modules and their deployment information |
 | `admin bot-stats` | Show aggregated statistics from various bot modules |
@@ -115,10 +115,10 @@ botModules:
           level: user
           limit: 3
           interval: 1m
-        moduleUptime:
+        health:
           mode: drop
           level: user
-          limit: 3
+          limit: 5
           interval: 1m
         moduleRestart:
           mode: drop

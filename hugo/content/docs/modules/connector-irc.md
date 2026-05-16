@@ -154,8 +154,33 @@ This action sends a WHO query to the IRC server every time (no caching) to ensur
 | Subject | Description |
 |---|---|
 | `stats.uptime` | Responds with module uptime via `replyChannel` |
-| `stats.emit.request` | Responds with full stats (uptime, memory, Prometheus metrics) via `replyChannel` |
+| `stats.emit.request` | Responds with full stats (uptime, memory, Prometheus metrics, connector details) via `replyChannel` |
 | `control.connectors.irc.core.>` | Logs core control messages |
+
+The `stats.emit.request` response includes a `connector` array with per-connection health details:
+
+```json
+{
+  "module": "connector-irc",
+  "stats": {
+    "version": "1.7.1",
+    "connector": [
+      {
+        "name": "liberachat",
+        "connected": true,
+        "host": "irc.libera.chat",
+        "nick": "mybot",
+        "channels": 3,
+        "reconnects": 0,
+        "lastConnect": "2026-05-16T00:00:00.000Z",
+        "lastDisconnect": null
+      }
+    ]
+  }
+}
+```
+
+The `admin health` command uses this data to display connection status, flag disconnected connectors as degraded, and show reconnect history.
 
 ## Architecture
 
