@@ -89,11 +89,12 @@ For each matched command, the router publishes to `command.execute.<commandUUID>
   "originalText": "!weather 12345",
   "matchedCommand": "!weather",
   "matchedText": "12345",
-  "timestamp": "2026-05-16T00:00:00.000Z"
+  "timestamp": "2026-05-16T00:00:00.000Z",
+  "botNick": "eevee"
 }
 ```
 
-Note the distinction between `text` and `originalText` — the prefix has been stripped from `text`, while `originalText` preserves the full message. The `matchedText` field contains the text that was actually tested against the command regex.
+Note the distinction between `text` and `originalText` — the prefix has been stripped from `text`, while `originalText` preserves the full message. The `matchedText` field contains the text that was actually tested against the command regex. The `botNick` field carries the bot's current nickname on the originating platform — useful for modules that need to reference the bot by name in user-facing messages.
 
 ### Broadcast Message
 
@@ -109,11 +110,12 @@ For each matched broadcast, the router publishes to `broadcast.message.<broadcas
   "nick": "goos",
   "userHost": "user/host",
   "text": "!weather 12345",
-  "timestamp": "2026-05-16T00:00:00.000Z"
+  "timestamp": "2026-05-16T00:00:00.000Z",
+  "botNick": "eevee"
 }
 ```
 
-Broadcast messages are always the full, unmodified text — no prefix stripping.
+Broadcast messages are always the full, unmodified text — no prefix stripping. The `botNick` field is included so broadcast listeners can identify the bot's own messages if needed.
 
 ### Rate Limiting
 

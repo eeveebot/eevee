@@ -183,10 +183,15 @@ The command execution payload contains:
 | `network` | Network name (e.g., `libera`) |
 | `instance` | Instance name (e.g., `mybot`) |
 | `channel` | Channel the message came from |
-| `user` | Nick of the user who sent the message |
+| `user` | Username/ident of the user who sent the message |
+| `nick` | Nickname of the user who sent the message |
+| `userHost` | Hostname of the user who sent the message |
 | `text` | Message text (with the command prefix stripped) |
 | `originalText` | Full original message text |
 | `matchedCommand` | The command that was matched (e.g., `!ping`) |
+| `matchedText` | The text that was actually tested against the command regex |
+| `timestamp` | Message timestamp |
+| `botNick` | The bot's current nickname on the originating platform |
 | `trace` | Trace ID for correlating request/response |
 
 ## Registering Help
