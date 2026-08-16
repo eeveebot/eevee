@@ -5,7 +5,7 @@ description: "Track when users were last seen in channels"
 draft: false
 ---
 
-The Seen module tracks when users were last seen in channels, allowing other users to check when someone was last active. It also provides a `since` command to see who has been active in a specified time period and a `lurkers` command to list inactive users.
+The Seen module tracks when users were last seen in channels, allowing other users to check when someone was last active. It also provides a `since` command to see who has been active in a specified time period, a `lurkers` command to list inactive users, and a `lastwords` command to recall what someone said right before leaving a channel.
 
 ## Features
 
@@ -14,6 +14,7 @@ The Seen module tracks when users were last seen in channels, allowing other use
 - See who has been active recently with `since <minutes>`
 - List inactive users with `lurkers`
 - Generate detailed lurkers reports with `lurkers-report` (channel-admin only)
+- Recall last words before departure with `lastwords <username>`
 - Persistent storage using SQLite database
 - Rate limiting to prevent abuse
 - Multi-platform support
@@ -77,6 +78,24 @@ lurkers-report [days]
 This command is restricted to channel admins (users with `+o`, `+O`, `+a`, or `+q` modes). It produces a detailed breakdown of active, inactive, and never-seen users in the channel, delivered via PM.
 
 - `days` — number of days for the activity window (default: 30, max: 365)
+
+### Check Last Words Before Departure
+
+To see what a user last said before leaving a channel (part, quit, or kick):
+
+```none
+lastwords <username>
+```
+
+Example:
+
+```none
+lastwords alice
+```
+
+The bot will respond with the user's last message, the departure type, which channel they left, when, and the reason (if any). The lookup searches across all channels — not just the one where the command is issued.
+
+Only users who have spoken at least once are tracked. Lurkers who never sent a message are not recorded.
 
 ## Configuration
 
