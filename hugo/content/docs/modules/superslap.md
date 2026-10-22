@@ -29,7 +29,6 @@ The Superslap module provides a family of slap commands with escalating intensit
 | `slapanus` | Casual slap — stages a brief animation, no kick |
 | `superslapanus` | Super slap — dramatic animation + kick |
 | `superslapanusv2` | Super slap v2 — rainbow-coloured animation + kick. Invulnerable users get a snarky reply instead |
-| `superslapaniggasanus` | Super slap variant — its own flavour of chaos + kick |
 | `supersuckurdick` | Mystery variant — its own flavour of chaos + kick |
 | `superslapsiesta` | Spanish-language super slap + kick. Random kick message drawn from a pool |
 | `superslapbaka` | Japanese-language super slap + kick |
@@ -89,7 +88,7 @@ Both commands check the caller's vulnerability (not the target's). Invulnerable 
 
 Set `kick: false` in the module config to convert all kick commands across the entire module to normal messages. When kicks are disabled, the kick reason text is sent as a regular channel message instead of an actual KICK command. This applies to all commands that would normally kick:
 
-- `superslapanus`, `superslapanusv2`, `superslapaniggasanus`, `supersuckurdick`, `superslapsiesta`, `superslapbaka`
+- `superslapanus`, `superslapanusv2`, `supersuckurdick`, `superslapsiesta`, `superslapbaka`
 - `poisonshits`, `superpoisonshits`
 
 This is useful for channels where kicks are restricted, or as a safety measure during events.
@@ -124,7 +123,6 @@ botModules:
       ratelimits:
         slapanus: { mode: drop, level: user, limit: 5, interval: 1m }
         superslapanus: { mode: drop, level: user, limit: 5, interval: 1m }
-        superslapaniggasanus: { mode: drop, level: user, limit: 5, interval: 1m }
         poisonshits: { mode: drop, level: user, limit: 3, interval: 5m }
         superpoisonshits: { mode: drop, level: user, limit: 1, interval: 15m }
 ```
