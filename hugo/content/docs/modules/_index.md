@@ -31,6 +31,7 @@ independently.
 - [calculator](calculator/) - Mathematical expression evaluator
 - [seen](seen/) - Track when users were last seen in channels
 - [tell](tell/) - Interstellar answering machine for offline messaging
+- [reminders](reminders/) - Time-based reminders with timezone support and recurring schedules
 - [urltitle](urltitle/) - Automatic URL title fetching for posted links
 - [weather](weather/) - Weather information provider
 ## Fun Modules
