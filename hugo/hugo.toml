@@ -48,7 +48,7 @@ defaultContentLanguage = 'en'
   themeColor     = "red"
 
 [params.footer]
-  copyright = "Attribution-NonCommercial-ShareAlike 4.0 International"
+  copyright = "AGPL-3.0-or-later"
 
 [params.social]
   github = "eeveebot"

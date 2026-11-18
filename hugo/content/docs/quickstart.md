@@ -535,7 +535,7 @@ The deployment includes:
 
 ## License
 
-All eevee components are covered under `Attribution-NonCommercial-ShareAlike 4.0 International`
+All eevee components are covered under `AGPL-3.0-or-later`
 
 See [LICENSE](https://github.com/eeveebot/eevee/blob/main/LICENSE) for details.
 
