@@ -30,6 +30,11 @@ Configuration is file-driven and **hot-reloaded**: when the YAML config file cha
 |---|---|
 | `chat.message.incoming.irc.{name}.{channel}.{nick}` | Incoming privmsg or action from IRC |
 
+> **Note:** For direct messages, the payload's `channel` field carries the
+> sender's nick rather than the raw IRC target (the bot's own nick), while
+> the subject keeps the raw target. Replying to `channel` therefore reaches
+> the user directly, the same as a channel reply.
+
 ### Outgoing Messages (NATS → IRC)
 
 | Subject | Payload | Description |

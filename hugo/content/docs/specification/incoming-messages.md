@@ -46,6 +46,11 @@ The message is published to a NATS subject with the format:
 chat.message.incoming.<platform>.<instance>.<channel>.<nick>
 ```
 
+For direct messages, the connector publishes the sender's nick in the
+`channel` field rather than the raw IRC target (which is the bot's own nick).
+A reply addressed to `channel` therefore reaches the user directly — modules
+respond to DMs exactly as they respond to channel messages.
+
 Connectors are the bridge between the outside world and eevee.bot's nervous system. Each platform gets its own connector, and each connector may manage multiple connections. They do the lonely work of translation — turning the chaos of IRC events and Discord gateway messages into something the router can reason about.
 
 ## The Router Decides
